@@ -1,0 +1,9 @@
+DEPARTURES_SCHEDULED,DEPARTURES_PERFORMED,SEATS,PASSENGERS,DISTANCE,UNIQUE_CARRIER,AIRLINE_ID,UNIQUE_CARRIER_NAME,ORIGIN_AIRPORT_ID,ORIGIN,ORIGIN_CITY_NAME,ORIGIN_STATE_ABR,ORIGIN_STATE_NM,DEST_AIRPORT_ID,DEST,DEST_CITY_NAME,DEST_STATE_ABR,DEST_STATE_NM,MONTH
+1,1,110,100,636,DL,19790,Delta Air Lines Inc.,10994,CHS,"Charleston, SC",SC,South Carolina,12478,JFK,"New York, NY",NY,New York,1
+1,2,220,76,220,DL,19790,Delta Air Lines Inc.,11003,CID,"Cedar Rapids/Iowa City, IA",IA,Iowa,13487,MSP,"Minneapolis, MN",MN,Minnesota,1
+1,1,149,128,155,DL,19790,Delta Air Lines Inc.,11066,CMH,"Columbus, OH",OH,Ohio,11433,DTW,"Detroit, MI",MI,Michigan,1
+1,1,158,92,752,DL,19790,Delta Air Lines Inc.,11193,CVG,"Cincinnati, OH",KY,Kentucky,10721,BOS,"Boston, MA",MA,Massachusetts,1
+1,1,149,116,411,DL,19790,Delta Air Lines Inc.,11193,CVG,"Cincinnati, OH",KY,Kentucky,11278,DCA,"Washington, DC",VA,Virginia,1
+1,1,160,116,1678,DL,19790,Delta Air Lines Inc.,11193,CVG,"Cincinnati, OH",KY,Kentucky,12889,LAS,"Las Vegas, NV",NV,Nevada,1
+1,1,132,104,1900,DL,19790,Delta Air Lines Inc.,11193,CVG,"Cincinnati, OH",KY,Kentucky,12892,LAX,"Los Angeles, CA",CA,California,1
+1,1,179,123,1900,DL,19790,Delta Air Lines Inc.,11193,CVG,"Cincinnati, OH",KY,Kentucky,12892,LAX,"Los Angeles, CA",CA,California,1

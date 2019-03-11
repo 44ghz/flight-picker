@@ -1,6 +1,6 @@
 # flight-picker
 
-Written in Python, this program will take in data from an input .xlsx file and determine the best flight options based on the criteria provided by the user.
+Written in Python, this program will take in data from an input .csv file and determine the best flight options based on the criteria provided by the user.
 Utilizing TKinter, there will be a GUI to accompany the program.
 
 There are two modes in which the program will run:

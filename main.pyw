@@ -1,4 +1,17 @@
-import tkinter as tk
+import os # For use with directories
+import tkinter as tk # Main GUI capabilities
+import pandas as pd # Main statistic and data tabulation capabilities
+from modules import tkfunctions as tf # Custom TKinter functions
+
+def openData():
+    try:
+        os.chdir('data')
+        fileValues= pd.read_csv('2018_flight_data.csv')
+        return fileValues
+    except FileNotFoundError:
+        tf.fileNotFoundPopup()
+
+flightData = openData()
 
 mainWindow = tk.Tk()
 mainWindow.title("Project Prototype")
@@ -29,7 +42,7 @@ choiceMan = tk.Radiobutton(mainWindow, text = "Manual",
     value = 2)
 choiceMan.pack(anchor = tk.W)
 
-button = tk.Button(mainWindow, text = "Stop", width = 25, command = mainWindow.destroy)
+button = tk.Button(mainWindow, text = "Stop", width = 25)#mainWindow.destroy)
 button.pack()
 
 mainWindow.mainloop()
