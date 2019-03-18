@@ -33,35 +33,35 @@ def create_options(frame):
 
     # Distance selection menu
     distanceLabel = tk.Label(frame, text = "Distance", font = helvBold)
-    distanceLabel.grid(row = 1, column = 0, sticky = 'w', ipadx = 8)
+    distanceLabel.grid(row = 1, column = 0, sticky = 'w', ipadx = 5)
     distanceMenu = tf.OptionsCombobox(frame, distanceList, 2, 0)
 
     # Carrier selection menu
     carrierLabel = tk.Label(frame, text = "\nCarrier", font = helvBold)
-    carrierLabel.grid(row = 3, column = 0, sticky = 'w', ipadx = 8)
+    carrierLabel.grid(row = 3, column = 0, sticky = 'w', ipadx = 5)
     carrierMenu = tf.OptionsCombobox(frame, carrierList, 4, 0)
 
     # Origin City selection menu
     originLabel = tk.Label(frame, text = "\nOrigin City", font = helvBold)
-    originLabel.grid(row = 5, column = 0, sticky = 'w', ipadx = 8)
+    originLabel.grid(row = 5, column = 0, sticky = 'w', ipadx = 5)
     originMenu = tf.OptionsCombobox(frame, originList, 6, 0)
 
     # Destination City selection menu
     destinationLabel = tk.Label(frame, text = "\nDestination City", font = helvBold)
-    destinationLabel.grid(row = 7, column = 0, sticky = 'w', ipadx = 8)
+    destinationLabel.grid(row = 7, column = 0, sticky = 'w', ipadx = 5)
     destinationMenu = tf.OptionsCombobox(frame, destinationList, 8, 0)
 
     # Aircraft selection menu
     aircraftLabel = tk.Label(frame, text = "\nAircraft", font = helvBold)
-    aircraftLabel.grid(row = 9, column = 0, sticky = 'w', ipadx = 8)
+    aircraftLabel.grid(row = 9, column = 0, sticky = 'w', ipadx = 5)
     aircraftMenu = tf.OptionsCombobox(frame, aircraftList, 10, 0)
 
     # Month selection menu
     monthLabel = tk.Label(frame, text = "\nMonth", font = helvBold)
-    monthLabel.grid(row = 11, column = 0, sticky = 'w', ipadx = 8)
+    monthLabel.grid(row = 11, column = 0, sticky = 'w', ipadx = 5)
     monthMenu = tf.OptionsCombobox(frame, monthList, 12, 0)
 
     # State selection menu
     stateLabel = tk.Label(frame, text = "\nState", font = helvBold)
-    stateLabel.grid(row = 13, column = 0, sticky = 'w', ipadx = 8)
+    stateLabel.grid(row = 13, column = 0, sticky = 'w', ipadx = 5)
     stateMenu = tf.OptionsCombobox(frame, stateList, 14, 0)
