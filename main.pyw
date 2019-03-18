@@ -19,17 +19,17 @@ helv = font.Font(family = 'Helvetica', size = '8')
 helvBold = font.Font(family = 'Helvetica', size = '11', weight = 'bold')
 
 mainWindow.grid_rowconfigure(0, weight = 2)
-mainWindow.grid_columnconfigure(0, weight = 1)  # Left Panel
+mainWindow.grid_columnconfigure(0, weight = 0)  # Left Panel
 mainWindow.grid_columnconfigure(1, weight = 1)  # Separator
 mainWindow.grid_columnconfigure(2, weight = 10) # Statistics and results
 
 leftFrame = tk.Frame(mainWindow, # Frame for mode selection and options
     bg = 'blue',
     width = 135,
-    height = 800)
+    height = 570)
 leftFrame.grid(row = 0, column = 0)
 leftFrame.grid_rowconfigure(0, weight = 0)
-leftFrame.grid_rowconfigure(1, weight = 1)
+leftFrame.grid_rowconfigure(1, weight = 0)
 leftFrame.grid_rowconfigure(2, weight = 10)
 
 ###################################
@@ -88,7 +88,7 @@ options.create_options(optionsFrame) # Creating the options to use for manual se
 separator = tk.Frame(mainWindow, # Frame for vertical separator between options and statistics
     bg = 'white',
     width = 2,
-    height = 570,
+    height = 800,
     relief = 'groove',
     borderwidth = 5)
 separator.grid(row = 0, column = 1, sticky = 'w')
