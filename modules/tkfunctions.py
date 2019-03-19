@@ -1,9 +1,7 @@
 import tkinter as tk
-import os
 import pandas as pd
 from tkinter import font
 from tkinter import ttk
-from tkinter import filedialog as fd
 from modules import dataretrieval as dr
 
 def fnf_popup():
