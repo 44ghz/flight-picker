@@ -1,53 +1,28 @@
+import os
 import tkinter as tk
 import pandas as pd
 from tkinter import font
 from modules import dataretrieval as dr
 from modules import tkfunctions as tf
 
-def get_options_lists(flightData):
-    optionsList = []
-
-    CARRIER_COLUMN = 5
-    ORIGIN_CITY_COLUMN = 6
-    DESTINATION_CITY_COLUMN = 7
-    AIRCRAFT_COLUMN = 8
-    STATE_ORIGIN_COLUMN = 9
-    STATE_DESTINATION_COLUMN = 10
-
-    aircraftData = dr.open_data('AircraftNames.csv')
-
-    distanceList = ["None", "0 - 100", "100 - 200", "200 - 300", "300 - 400", "400 - 499",
-        "500 - 999", "1000 - 1499", "1500 - 1999", "2000-2499", ">2500"]
-    optionsList.append(distanceList)
-
-    carrierList = dr.get_data(flightData, CARRIER_COLUMN) # Creating list for the carriers
-    optionsList.append(carrierList)
-
-    originList = dr.get_data(flightData, ORIGIN_CITY_COLUMN) # Creating list for the origin cities
-    optionsList.append(originList)
-
-    destinationList = dr.get_data(flightData, DESTINATION_CITY_COLUMN) # Creating list for the destination cities
-    optionsList.append(destinationList)
-
-    aircraftList = sorted(dr.get_aircraft_names(aircraftData, dr.get_data(flightData, AIRCRAFT_COLUMN))) # Creating list for the aircraft
-    aircraftList.insert(0, "None") # Adding None as an option to the start of the list
-    optionsList.append(aircraftList)
-
-    stateOriginList = dr.get_data(flightData, STATE_ORIGIN_COLUMN) # Creating list for state origins
-    optionsList.append(stateOriginList)
-
-    stateDestinationList = dr.get_data(flightData, STATE_DESTINATION_COLUMN) # Creating list for state destinations
-    optionsList.append(stateDestinationList)
-
-    monthList = ["None", "January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"]
-    optionsList.append(monthList)
+def get_options_lists():
+    optionsList = [] # The list of lists for options
+    # Reading in every list option from files
+    optionsList.append(dr.read_options("distances.dat"))
+    optionsList.append(dr.read_options("carriers.dat"))
+    optionsList.append(dr.read_options("origincities.dat"))
+    optionsList.append(dr.read_options("destinationcities.dat"))
+    optionsList.append(dr.read_options("aircraft.dat"))
+    optionsList.append(dr.read_options("stateorigins.dat"))
+    optionsList.append(dr.read_options("statedestinations.dat"))
+    optionsList.append(dr.read_options("months.dat"))
 
     return optionsList
 
-def create_options(leftFrame, flightData):
+def create_options(leftFrame):
     helvBold = font.Font(family = 'Helvetica', size = '11', weight = 'bold')
 
-    optionsList = get_options_lists(flightData)
+    optionsList = get_options_lists() # Getting the options from files
     distanceList = optionsList[0]
     carrierList = optionsList[1]
     originList = optionsList[2]
@@ -98,3 +73,52 @@ def create_options(leftFrame, flightData):
     stateDestinationLabel = tk.Label(leftFrame, text = "\nState Destination", font = helvBold)
     stateDestinationLabel.grid(row = 15, column = 0, sticky = 'w', ipadx = 6)
     stateDestinationMenu = tf.OptionsCombobox(leftFrame, stateOriginList, 16, 0)
+
+
+def update_options_lists(flightData):
+    optionsList = []
+
+    CARRIER_COLUMN = 5
+    ORIGIN_CITY_COLUMN = 6
+    DESTINATION_CITY_COLUMN = 7
+    AIRCRAFT_COLUMN = 8
+    STATE_ORIGIN_COLUMN = 9
+    STATE_DESTINATION_COLUMN = 10
+
+    aircraftData = dr.open_data('AircraftNames.csv')
+
+    distanceList = ["None", "0 - 100", "100 - 200", "200 - 300", "300 - 400", "400 - 499",
+        "500 - 999", "1000 - 1499", "1500 - 1999", "2000-2499", ">2500"]
+    dr.write_options(distanceList, "distances.dat")
+    optionsList.append(distanceList)
+
+    carrierList = dr.get_data(flightData, CARRIER_COLUMN) # Creating list for the carriers
+    dr.write_options(carrierList, "carriers.dat")
+    optionsList.append(carrierList)
+
+    originList = dr.get_data(flightData, ORIGIN_CITY_COLUMN) # Creating list for the origin cities
+    dr.write_options(originList, "origincities.dat")
+    optionsList.append(originList)
+
+    destinationList = dr.get_data(flightData, DESTINATION_CITY_COLUMN) # Creating list for the destination cities
+    dr.write_options(destinationList, "destinationcities.dat")
+    optionsList.append(destinationList)
+
+    aircraftList = sorted(dr.get_aircraft_names(aircraftData, dr.get_data(flightData, AIRCRAFT_COLUMN))) # Creating list for the aircraft
+    aircraftList.insert(0, "None") # Adding None as an option to the start of the list
+    dr.write_options(aircraftList, "aircraft.dat")
+    optionsList.append(aircraftList)
+
+    stateOriginList = dr.get_data(flightData, STATE_ORIGIN_COLUMN) # Creating list for state origins
+    dr.write_options(stateOriginList, "stateorigins.dat")
+    optionsList.append(stateOriginList)
+
+    stateDestinationList = dr.get_data(flightData, STATE_DESTINATION_COLUMN) # Creating list for state destinations
+    dr.write_options(stateDestinationList, "statedestinations.dat")
+    optionsList.append(stateDestinationList)
+
+    monthList = ["None", "January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"]
+    dr.write_options(monthList, "months.dat")
+    optionsList.append(monthList)
+
+    return optionsList
