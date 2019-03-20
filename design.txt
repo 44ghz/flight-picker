@@ -1,0 +1,13 @@
+The overall algorithm takes in the .csv of the flighs, and converts it to a DataFrame using pandas. When working with the data, it is converted to a list of lists, for easier indexing.
+
+The program begins with automatic mode, which calculates the best month to schedule a flight based on a ranking.
+ The ranking is determined by an average of flight specifications for that month. 
+    To determine the rank for each flight, the program will divide the flights performed by the flights scheduled for that row. 
+    The program will then multiply that percentage by the number of available seats (seats - passengers) to find the rank for that row.
+    Once all the ranks are added up for each month, it will divide that rank by the number of rows to find the average for the month.
+
+When the average percentages and average ranks are determined, the month will be sorted by the average rank, and displayed to the user.
+
+For manual mode, there exists a set of options to the user, who can filter out desired attributes to get a list of flights that are best for that attribute (or some combination of these)
+
+In main.pyw, comment out line 122 to enable manual mode (there are currently graphical issues that need to be worked out).
