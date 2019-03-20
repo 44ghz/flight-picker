@@ -1,5 +1,6 @@
 import os
 import pandas as pd
+from modules import tkfunctions as tf
 
 def open_data(filename):
     try:
@@ -9,6 +10,29 @@ def open_data(filename):
         return fileValues
     except FileNotFoundError:
         tf.fnf_popup()
+
+def read_options(filename):
+    optionList = []
+
+    try:
+        os.chdir('data/options') # Change to options folder
+        with open(filename, 'r') as optionsFile:
+            for option in optionsFile:
+                currLine = option[:-1] # Get rid of the newline character
+                optionList.append(currLine) # Add it to the options list
+        os.chdir('..') # Go back to the main dir
+        os.chdir('..')
+        return optionList
+    except FileNotFoundError:
+        tf.fnf_popup()
+
+def write_options(optionList, filename):
+    os.chdir('data/options') # Change to options folder
+    with open(filename, 'w') as file:
+        for option in optionList:
+            file.write('%s\n' % option) # Adding each option to its file
+    os.chdir('..') # Go back to the main dir
+    os.chdir('..')
 
 def get_data(flightData, column):
     rows = len(flightData.index) # The number of rows in the DataFrame
