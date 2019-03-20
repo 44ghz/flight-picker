@@ -8,10 +8,8 @@ from modules import options # To create the Options panel
 from modules import results
 from ttkthemes import themed_tk
 
-def callback(mode, resulstFrame, flightData): # The command to use when finding flights
+def callback(mode, resultsFrame, flightData): # The command to use when finding flights
     results.find_flights(mode, resultsFrame, flightData)
-
-#mainWindow = tk.Tk() # Main tkinter window
 
 mainWindow = themed_tk.ThemedTk()
 mainWindow.set_theme('black')
@@ -90,7 +88,7 @@ optionsCanvas.create_text(8, 18, text = "Options", anchor = tk.W)
 optionsCanvas.create_line(9, 26, 60, 26) # Creating line for underneath Options
 optionsCanvas.grid(row = 0, column = 0)
 
-options.create_options(optionsFrame, flightData) # Creating the options to use for manual selection
+options.create_options(optionsFrame) # Creating the options to use for manual selection
 
 ###################################
 
@@ -120,5 +118,7 @@ buffer = tk.Label(optionsFrame, text = "") # To give some space between the last
 buffer.grid(row = 17, column = 0)
 
 findButton.grid(row = 18, column = 0)
+
+results.automatic(resultsFrame, flightData) # Comment out to access manual mode
 
 mainWindow.mainloop()
