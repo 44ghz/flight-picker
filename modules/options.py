@@ -4,7 +4,9 @@ from tkinter import font
 from modules import dataretrieval as dr
 from modules import tkfunctions as tf
 
-def create_options(leftFrame, flightData):
+def get_options_lists(flightData):
+    optionsList = []
+
     CARRIER_COLUMN = 5
     ORIGIN_CITY_COLUMN = 6
     DESTINATION_CITY_COLUMN = 7
@@ -14,19 +16,46 @@ def create_options(leftFrame, flightData):
 
     aircraftData = dr.open_data('AircraftNames.csv')
 
-    helvBold = font.Font(family = 'Helvetica', size = '11', weight = 'bold')
+    distanceList = ["None", "0 - 100", "100 - 200", "200 - 300", "300 - 400", "400 - 499",
+        "500 - 999", "1000 - 1499", "1500 - 1999", "2000-2499", ">2500"]
+    optionsList.append(distanceList)
 
-    distanceList = ["None", "0 - 100", "100 - 200", "200 - 300", "300 - 400", "400 - 499", "500 - 999", "1000 - 1499", "1500 - 1999", ">2000"]
     carrierList = dr.get_data(flightData, CARRIER_COLUMN) # Creating list for the carriers
+    optionsList.append(carrierList)
+
     originList = dr.get_data(flightData, ORIGIN_CITY_COLUMN) # Creating list for the origin cities
+    optionsList.append(originList)
+
     destinationList = dr.get_data(flightData, DESTINATION_CITY_COLUMN) # Creating list for the destination cities
+    optionsList.append(destinationList)
 
     aircraftList = sorted(dr.get_aircraft_names(aircraftData, dr.get_data(flightData, AIRCRAFT_COLUMN))) # Creating list for the aircraft
     aircraftList.insert(0, "None") # Adding None as an option to the start of the list
+    optionsList.append(aircraftList)
 
     stateOriginList = dr.get_data(flightData, STATE_ORIGIN_COLUMN) # Creating list for state origins
+    optionsList.append(stateOriginList)
+
     stateDestinationList = dr.get_data(flightData, STATE_DESTINATION_COLUMN) # Creating list for state destinations
+    optionsList.append(stateDestinationList)
+
     monthList = ["None", "January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"]
+    optionsList.append(monthList)
+
+    return optionsList
+
+def create_options(leftFrame, flightData):
+    helvBold = font.Font(family = 'Helvetica', size = '11', weight = 'bold')
+
+    optionsList = get_options_lists(flightData)
+    distanceList = optionsList[0]
+    carrierList = optionsList[1]
+    originList = optionsList[2]
+    destinationList = optionsList[3]
+    aircraftList = optionsList[4]
+    stateOriginList = optionsList[5]
+    stateDestinationList = optionsList[6]
+    monthList = optionsList[7]
 
     ###################################
 
