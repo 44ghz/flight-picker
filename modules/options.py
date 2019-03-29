@@ -19,6 +19,7 @@ def get_options_lists():
 
     return optionsList
 
+
 def create_options(leftFrame):
     helvBold = font.Font(family = 'Helvetica', size = '11', weight = 'bold')
 
@@ -87,8 +88,8 @@ def update_options_lists(flightData):
 
     aircraftData = dr.open_data('AircraftNames.csv')
 
-    distanceList = ["None", "0 - 100", "100 - 200", "200 - 300", "300 - 400", "400 - 499",
-        "500 - 999", "1000 - 1499", "1500 - 1999", "2000-2499", ">2500"]
+    distanceList = ["None", "0 - 99", "100 - 199", "200 - 299", "300 - 399", "400 - 499",
+        "500 - 999", "1000 - 1499", "1500 - 1999", "2000 - 2499", ">2500"]
     dr.write_options(distanceList, "distances.dat")
     optionsList.append(distanceList)
 
