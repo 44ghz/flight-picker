@@ -23,6 +23,8 @@ class OptionsCombobox():
         self._box.grid(row = self._row, column = self._column)
         self._box.config(width = 13, justify = tk.LEFT)
 
+
+
 def fnf_popup():
     win = tk.Tk()
     win.title("File Error")
@@ -33,43 +35,44 @@ def fnf_popup():
     fnfButton = tk.Button(text = "OK", command = win.destroy)
     fnfButton.pack()
 
+
+
 def create_auto_tabs(frame, listOfBests):
     helvBold = font.Font(family = 'Helvetica', size = '11', weight = 'bold')
     criteriaTabs = ttk.Notebook(frame) # The pages used to tab through the criteria
 
-    critMonth = ttk.Frame(criteriaTabs,
+    critDistance = ttk.Frame(criteriaTabs,
         width = 1440,
         height = 676)   # First page
 
-    critDistance = ttk.Frame(criteriaTabs,
+    critCarrier = ttk.Frame(criteriaTabs,
         width = 1440,
         height = 676)   # Second page
 
-    critCarrier = ttk.Frame(criteriaTabs,
+    critOriginCity = ttk.Frame(criteriaTabs,
         width = 1440,
         height = 676)   # Third page
 
-    critOriginCity = ttk.Frame(criteriaTabs,
+    critDestCity = ttk.Frame(criteriaTabs,
         width = 1440,
         height = 676)   # Fourth page
 
-    critDestCity = ttk.Frame(criteriaTabs,
+    critAircraft = ttk.Frame(criteriaTabs,
         width = 1440,
         height = 676)   # Fifth page
 
-    critAircraft = ttk.Frame(criteriaTabs,
+    critOriginState = ttk.Frame(criteriaTabs,
         width = 1440,
         height = 676)   # Sixth page
 
-    critOriginState = ttk.Frame(criteriaTabs,
+    critDestState = ttk.Frame(criteriaTabs,
         width = 1440,
         height = 676)   # Seventh page
 
-    critDestState = ttk.Frame(criteriaTabs,
+    critMonth = ttk.Frame(criteriaTabs,
         width = 1440,
-        height = 676)   # Eigth page
+        height = 676)   # Eighth page
 
-    criteriaTabs.add(critMonth, text = 'Month') # Add each of the criteria to the tabs frame
     criteriaTabs.add(critDistance, text = 'Distance')
     criteriaTabs.add(critCarrier, text = 'Carrier')
     criteriaTabs.add(critOriginCity, text = 'Origin City')
@@ -77,42 +80,67 @@ def create_auto_tabs(frame, listOfBests):
     criteriaTabs.add(critAircraft, text = 'Aircraft')
     criteriaTabs.add(critOriginState, text = 'Origin State')
     criteriaTabs.add(critDestState, text = 'Destination State')
+    criteriaTabs.add(critMonth, text = 'Month') # Add each of the criteria to the tabs frame
     criteriaTabs.grid(row = 0, column = 0)
 
-    bestMonth = tk.StringVar() # The output of the best month
-    bestMonthName = listOfBests[0][0][0] # The best month name from the list of overall best things
-    bestMonthRank = listOfBests[0][0][1][0] # The best month rank
-    bestMonthPerc = listOfBests[0][0][1][1] # The best month percentage
+    display_best(critCarrier, listOfBests, 0)
+    display_best(critOriginCity, listOfBests, 1)
+    display_best(critDestCity, listOfBests, 2)
+    display_best(critAircraft, listOfBests, 3)
+    display_best(critOriginState, listOfBests, 4)
+    display_best(critDestState, listOfBests, 5)
+    display_best(critMonth, listOfBests, 6)
 
-    bestMonth.set("The best month to fly is: " + bestMonthName +
-        "\nwith its average rank of: " + bestMonthRank + " points" +
-        "\nand its average percentage of: " + bestMonthPerc + "%")
 
-    bestMonthLabel = tk.Label(critMonth, textvariable = bestMonth, bg = 'white', width = 75)
-    bestMonthLabel.pack(side = 'top')
-    #bestMonthLabel.grid(row = 0, column = 0, sticky = 'nw')
+def display_best(frame, listOfBests, desiredCriteria):
+    critDict = {}
+    critDict[0] = "distance"
+    critDict[1] = "carrier"
+    critDict[2] = "origin city"
+    critDict[3] = "destination city"
+    critDict[4] = "aircraft"
+    critDict[5] = "origin state"
+    critDict[6] = "destination state"
+    critDict[7] = "month"
 
-    monthTree = ttk.Treeview(critMonth)
-    monthTree["columns"] = ("1", "2", "3")
-    monthTree['show'] = 'headings'
-    monthTree.column("1", width = 200, anchor = 'c')
-    monthTree.column("2", width = 200, anchor = 'c')
-    monthTree.column("3", width = 200, anchor = 'c')
+    bestCriteria = tk.StringVar() # The output of the best month
+    bestCriteriaName = listOfBests[desiredCriteria][0][0] # The best criteria name from the list of overall best things
+    bestCriteriaRank = listOfBests[desiredCriteria][0][1][0] # The best criteria rank
+    bestCriteriaPerc = listOfBests[desiredCriteria][0][1][1] # The best criteria percentage
 
-    monthTree.heading("1", text = "Month")
-    monthTree.heading("2", text = "Average Rank")
-    monthTree.heading("3", text = "Average % of Success")
+    bestCriteria.set("The best " + critDict[desiredCriteria] + " to fly is: " + bestCriteriaName +
+        "\nwith its average rank of: " + str(bestCriteriaRank) + " points" +
+        "\nand its average percentage of: " + str(bestCriteriaPerc) + "%")
 
-    monthTree.config(height = 12)
+    bestCriteriaLabel = tk.Label(frame, textvariable = bestCriteria, bg = 'white', width = 75)
+    bestCriteriaLabel.pack(side = 'top')
+    #bestCriteriaLabel.grid(row = 0, column = 0, sticky = 'nw')
 
-    monthTree.pack(side = 'top')
-    #monthTree.grid(row = 0, column = 1)
-    for month in range(len(listOfBests[0])): # For every month in the list of best flights
-        monthTree.insert("", 'end', values = (listOfBests[0][month][0], listOfBests[0][month][1][0], listOfBests[0][month][1][1]))
+    criteriaTree = ttk.Treeview(frame)
+    criteriaTree["columns"] = ("1", "2", "3")
+    criteriaTree['show'] = 'headings'
+    criteriaTree.column("1", width = 200, anchor = 'c')
+    criteriaTree.column("2", width = 200, anchor = 'c')
+    criteriaTree.column("3", width = 200, anchor = 'c')
+
+    criteriaTree.heading("1", text = "Criteria")
+    criteriaTree.heading("2", text = "Average Rank")
+    criteriaTree.heading("3", text = "Average % of Success")
+
+    criteriaTree.config(height = 12)
+
+    criteriaTree.pack(side = 'top')
+    #criteriaTree.grid(row = 0, column = 1)
+    for option in range(len(listOfBests[desiredCriteria])): # For every option in the desired criteria
+        criteriaTree.insert("", 'end', values =
+            (listOfBests[desiredCriteria][option][0],
+                listOfBests[desiredCriteria][option][1][0],
+                    listOfBests[desiredCriteria][option][1][1]))
         # Insert into the tree: The month for the first column, the score for the second column, and the percentage for the third column
 
-    flightTree = ttk.Treeview(critMonth)
-    flightTree = configure_treeview(critMonth, flightTree)
+    flightTree = ttk.Treeview(frame)
+    flightTree = configure_treeview(frame, flightTree)
+
 
 def create_manual_results_panel(frame, flightData):
     flightList = dr.convert_df(flightData)
@@ -125,6 +153,8 @@ def create_manual_results_panel(frame, flightData):
 
     for flight in range(len(flightList)): # Adding each flight to the tree view
         flightTree.insert("", 'end', values = flightList[flight])
+
+
 
 def configure_treeview(frame, flightTree):
     flightTree.config(height = 20) # 33 for max height
