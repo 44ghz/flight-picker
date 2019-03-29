@@ -11,7 +11,7 @@ def find_flights(mode, frame, flightData):
         manual(frame, flightData)
 
 def automatic(frame, flightData):
-    # DIST_COLUMN = 5 # The columns that correspond to the flight dataframe
+    DIST_COLUMN = 5 # The columns that correspond to the flight dataframe
     CARRIER_COLUMN = 6
     ORIGIN_COLUMN = 7
     DEST_COLUMN = 8
@@ -21,7 +21,7 @@ def automatic(frame, flightData):
     MONTH_COLUMN = 12
 
     #TODO: categorize a flight's distance
-    #flightsForDistance = {} # Use predetermined ranges
+    flightsForDistance = {} # Use predetermined ranges
     flightsForCarrier = {}
     flightsForOriginCity = {}
     flightsForDestCity = {}
@@ -35,6 +35,9 @@ def automatic(frame, flightData):
     optionsList = op.get_options_lists()
 
     # Taking each unique option from the options lists and creating the key values for each dictionary
+    for distance in optionsList[0]:
+        flightsForDistance[distance] = []
+
     for carrier in optionsList[1]:
         flightsForCarrier[carrier] = [] # Each value for the keys will be a list, which will then have lists inside (aka flights)
 
@@ -56,9 +59,13 @@ def automatic(frame, flightData):
     for month in optionsList[7]:
         flightsForMonth[month] = []
 
-    for currFlight in range(len(flightList)): # For every flight in the list, categorize it to each dict
-        currentFlight = flightList[currFlight]
-        flightsForCarrier[flightList[currFlight][CARRIER_COLUMN]].append(currentFlight)
+    for flight in range(len(flightList)): # For every flight in the list, categorize it to each dict
+        currentFlight = flightList[flight]
+        # Convert the distance from the flight to a range supported by the criteria
+        flightsForDistance[str(find_dist_range(currentFlight[DIST_COLUMN]))].append(currentFlight)
+
+        # Everything else goes normally
+        flightsForCarrier[flightList[flight][CARRIER_COLUMN]].append(currentFlight)
         flightsForOriginCity[currentFlight[ORIGIN_COLUMN]].append(currentFlight)
         flightsForDestCity[currentFlight[DEST_COLUMN]].append(currentFlight)
         flightsForAircraft[currentFlight[AIRCRAFT_COLUMN]].append(currentFlight)
@@ -68,6 +75,7 @@ def automatic(frame, flightData):
 
     listOfBests = [] # The overall list of best things
 
+    percForDistance = find_best(flightsForDistance)
     percForCarrier = find_best(flightsForCarrier)
     percForOriginCity = find_best(flightsForOriginCity)
     percForDestCity = find_best(flightsForDestCity)
@@ -76,6 +84,7 @@ def automatic(frame, flightData):
     percForDestState = find_best(flightsForDestState)
     percForMonth = find_best(flightsForMonth)
 
+    listOfBests.append(percForDistance)
     listOfBests.append(percForCarrier)
     listOfBests.append(percForOriginCity)
     listOfBests.append(percForDestCity)
@@ -126,7 +135,28 @@ def find_best(critList):
         comboList.append(critAverage)
         percForCrit[crit] = comboList # Add that to a dict of averages for the criteria
 
-    #percForCrit = sorted(percForCrit.items(), key = lambda kv: kv[1], reverse = True) # Sort the criteria by their ranks
-
     percForCrit = sorted(percForCrit.items(), key=operator.itemgetter(1), reverse = True)
     return percForCrit # Returning the newly sorted dictionary
+
+
+def find_dist_range(distance):
+    if(0 <= distance <= 99):
+        return "0 - 99"
+    elif(100 <= distance <= 199):
+        return "100 - 199"
+    elif(200 <= distance <= 299):
+        return "200 - 299"
+    elif(300 <= distance <= 399):
+        return "300 - 399"
+    elif(400 <= distance <= 499):
+        return "400 - 499"
+    elif(500 <= distance <= 999):
+        return "500 - 999"
+    elif(1000 <= distance <= 1499):
+        return "1000 - 1499"
+    elif(1500 <= distance <= 1999):
+        return "1500 - 1999"
+    elif(2000 <= distance <= 2499):
+        return "2000 - 2499"
+    else:
+        return ">2500"

@@ -83,18 +83,19 @@ def create_auto_tabs(frame, listOfBests):
     criteriaTabs.add(critMonth, text = 'Month') # Add each of the criteria to the tabs frame
     criteriaTabs.grid(row = 0, column = 0)
 
-    display_best(critCarrier, listOfBests, 0)
-    display_best(critOriginCity, listOfBests, 1)
-    display_best(critDestCity, listOfBests, 2)
-    display_best(critAircraft, listOfBests, 3)
-    display_best(critOriginState, listOfBests, 4)
-    display_best(critDestState, listOfBests, 5)
-    display_best(critMonth, listOfBests, 6)
+    display_best(critDistance, listOfBests, 0)
+    display_best(critCarrier, listOfBests, 1)
+    display_best(critOriginCity, listOfBests, 2)
+    display_best(critDestCity, listOfBests, 3)
+    display_best(critAircraft, listOfBests, 4)
+    display_best(critOriginState, listOfBests, 5)
+    display_best(critDestState, listOfBests, 6)
+    display_best(critMonth, listOfBests, 7)
 
 
 def display_best(frame, listOfBests, desiredCriteria):
     critDict = {}
-    critDict[0] = "distance"
+    critDict[0] = "distance (in miles)"
     critDict[1] = "carrier"
     critDict[2] = "origin city"
     critDict[3] = "destination city"
