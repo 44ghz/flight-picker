@@ -4,23 +4,50 @@ from modules import dataretrieval as dr
 from modules import options as op
 from modules import tkfunctions as tf
 
-def find_flights(mode, frame, flightData):
+# Should only be called once to prevent altering the list a second time
+def rank_flights(flightList):
+    SCHEDULED_COLUMN = 0
+    DEPARTURES_COLUMN = 1
+    SEATS_COLUMN = 2
+
+    for flight in range(len(flightList)): # For every row in the list
+        currFlight = flightList[flight]
+
+        success = currFlight[DEPARTURES_COLUMN] / currFlight[SCHEDULED_COLUMN]
+        weight = currFlight[SEATS_COLUMN] / currFlight[DEPARTURES_COLUMN]
+
+        if(currFlight[DEPARTURES_COLUMN] > currFlight[SCHEDULED_COLUMN]):
+            success = 1.0
+
+        score = weight * success
+
+        score = round(score, 2)
+        success = round(success * 100, 2)
+
+        currFlight.insert(0, success)
+        currFlight.insert(0, score)
+
+    flightList = sorted(flightList, key = operator.itemgetter(0), reverse = True)
+    return flightList
+
+
+def find_flights(mode, resultsFrame, flightList, userChoices):
     if(mode.get() == 1):
-        automatic(frame, flightData)
+        automatic(resultsFrame, flightList)
     else:
-        manual(frame, flightData)
+        manual(resultsFrame, flightList, userChoices)
 
-def automatic(frame, flightData):
-    DIST_COLUMN = 5 # The columns that correspond to the flight dataframe
-    CARRIER_COLUMN = 6
-    ORIGIN_COLUMN = 7
-    DEST_COLUMN = 8
-    AIRCRAFT_COLUMN = 9
-    OR_STATE_COLUMN = 10
-    DEST_STATE_COLUMN = 11
-    MONTH_COLUMN = 12
 
-    #TODO: categorize a flight's distance
+def automatic(resultsFrame, flightList):
+    DIST_COLUMN = 6 # The columns that correspond to the row
+    CARRIER_COLUMN = 7
+    ORIGIN_COLUMN = 8
+    DEST_COLUMN = 9
+    AIRCRAFT_COLUMN = 10
+    OR_STATE_COLUMN = 11
+    DEST_STATE_COLUMN = 12
+    MONTH_COLUMN = 13
+
     flightsForDistance = {} # Use predetermined ranges
     flightsForCarrier = {}
     flightsForOriginCity = {}
@@ -29,9 +56,7 @@ def automatic(frame, flightData):
     flightsForOriginState = {}
     flightsForDestState = {}
     flightsForMonth = {}
-    percForMonth = {}
 
-    flightList = dr.convert_df(flightData)
     optionsList = op.get_options_lists()
 
     # Taking each unique option from the options lists and creating the key values for each dictionary
@@ -65,7 +90,7 @@ def automatic(frame, flightData):
         flightsForDistance[str(find_dist_range(currentFlight[DIST_COLUMN]))].append(currentFlight)
 
         # Everything else goes normally
-        flightsForCarrier[flightList[flight][CARRIER_COLUMN]].append(currentFlight)
+        flightsForCarrier[currentFlight[CARRIER_COLUMN]].append(currentFlight)
         flightsForOriginCity[currentFlight[ORIGIN_COLUMN]].append(currentFlight)
         flightsForDestCity[currentFlight[DEST_COLUMN]].append(currentFlight)
         flightsForAircraft[currentFlight[AIRCRAFT_COLUMN]].append(currentFlight)
@@ -73,70 +98,162 @@ def automatic(frame, flightData):
         flightsForDestState[currentFlight[DEST_STATE_COLUMN]].append(currentFlight)
         flightsForMonth[currentFlight[MONTH_COLUMN]].append(currentFlight)
 
+    flightsForCriteria = []
+
+    flightsForCriteria.append(flightsForDistance)
+    flightsForCriteria.append(flightsForCarrier)
+    flightsForCriteria.append(flightsForOriginCity)
+    flightsForCriteria.append(flightsForDestCity)
+    flightsForCriteria.append(flightsForAircraft)
+    flightsForCriteria.append(flightsForOriginState)
+    flightsForCriteria.append(flightsForDestState)
+    flightsForCriteria.append(flightsForMonth)
+
+    # Returning the list of best distances, passing in the list of flights and the thing we want to filter by
+    ranksForDistance = find_best_auto(flightsForDistance)
+    ranksForCarrier = find_best_auto(flightsForCarrier)
+    ranksForOriginCity = find_best_auto(flightsForOriginCity)
+    ranksForDestCity = find_best_auto(flightsForDestCity)
+    ranksForAircraft = find_best_auto(flightsForAircraft)
+    ranksForOriginState = find_best_auto(flightsForOriginState)
+    ranksForDestState = find_best_auto(flightsForDestState)
+    ranksForMonth = find_best_auto(flightsForMonth)
+
     listOfBests = [] # The overall list of best things
 
-    percForDistance = find_best(flightsForDistance)
-    percForCarrier = find_best(flightsForCarrier)
-    percForOriginCity = find_best(flightsForOriginCity)
-    percForDestCity = find_best(flightsForDestCity)
-    percForAircraft = find_best(flightsForAircraft)
-    percForOriginState = find_best(flightsForOriginState)
-    percForDestState = find_best(flightsForDestState)
-    percForMonth = find_best(flightsForMonth)
+    listOfBests.append(ranksForDistance)
+    listOfBests.append(ranksForCarrier)
+    listOfBests.append(ranksForOriginCity)
+    listOfBests.append(ranksForDestCity)
+    listOfBests.append(ranksForAircraft)
+    listOfBests.append(ranksForOriginState)
+    listOfBests.append(ranksForDestState)
+    listOfBests.append(ranksForMonth) # Add it to the list of best things
 
-    listOfBests.append(percForDistance)
-    listOfBests.append(percForCarrier)
-    listOfBests.append(percForOriginCity)
-    listOfBests.append(percForDestCity)
-    listOfBests.append(percForAircraft)
-    listOfBests.append(percForOriginState)
-    listOfBests.append(percForDestState)
-    listOfBests.append(percForMonth) # Add it to the list of best things
+    tf.create_auto_panel(resultsFrame, listOfBests, flightsForCriteria) # Create the tabs to display data
 
-    tf.create_auto_tabs(frame, listOfBests) # Create the tabs to display data
 
-def manual(frame, flightData):
-    tf.create_manual_results_panel(frame, flightData)
+def find_best_auto(critList):
+    SCORE_COLUMN = 0
+    PERCENTAGE_COLUMN = 1
 
-def find_best(critList):
-    SCHEDULED_COLUMN = 1
-    PERFORMED_COLUMN = 2
-    SEATS_COLUMN = 3
-    PASSEN_COLUMN = 4
+    critInfo = {}
 
-    percForCrit = {}
-
-    for crit in critList:
+    # Each criteria has a list of flights associated with it
+    # Take the score for each flight in the list and add it to the total
+    # Take the total score and divide it by the number of rows to find average score
+    # Do the same thing with percentage
+    for criteria in critList:
         comboList = []
-        count = 0 # The number of flights
-        totalPerc = 0 # Reset the total and count for the new criteria
-        totalRank = 0 # The total ranks for the criteria
-        currCrit = critList[crit] # Get all the flights for the current criteria
+        totalScore = 0
+        totalPercentage = 0
+        currCriteria = critList[criteria]
 
-        for flight in range(len(currCrit)):
-            rank = 0
-            currPercent = round(currCrit[flight][PERFORMED_COLUMN] # Get the flights performed and flights scheduled
-                / currCrit[flight][SCHEDULED_COLUMN] * 100, 2)
-            if(currPercent > 100): # Check for percentages above 100, as these can skew the results
-                currPercent = 100.00 # Just change to 100
+        for flight in range(len(currCriteria)):
+            totalScore += currCriteria[flight][SCORE_COLUMN]
+            totalPercentage += currCriteria[flight][PERCENTAGE_COLUMN]
 
-            # For rank, take the percent from above and multiply it by the number of available seats
-            rank = (currPercent) * (currCrit[flight][SEATS_COLUMN] - currCrit[flight][PASSEN_COLUMN])
-            totalRank += rank # Updating the total score for the month
-            totalPerc += currPercent # Updating the total percentages
-            count += 1.0 # Updating the number of flights
-
-        if(count == 0): # To avoid a divbyzero exception
+        if(len(currCriteria) == 0):
             continue
 
-        critRank = round(totalRank / count, 2) # Get the average rank for the criteria
-        critAverage = round(totalPerc / count, 2) # Get the average percentage for the criteria
-        comboList.append(critRank)
-        comboList.append(critAverage)
-        percForCrit[crit] = comboList # Add that to a dict of averages for the criteria
+        averageScore = round((totalScore / len(currCriteria)), 2)
+        averagePercentage = round((totalPercentage / len(currCriteria)), 2)
 
-    percForCrit = sorted(percForCrit.items(), key=operator.itemgetter(1), reverse = True)
-    return percForCrit # Returning the newly sorted dictionary
+        comboList.append(averageScore)
+        comboList.append(averagePercentage)
+
+        critInfo[criteria] = comboList
+
+    critInfo = sorted(critInfo.items(), key = operator.itemgetter(1), reverse = True) # Sorting the dict by score
+    return critInfo
+
+
+def manual(resultsFrame, flightList, userChoices):
+    manualFlightList = filter_flights(flightList, userChoices)
+
+    tf.create_manual_panel(resultsFrame, manualFlightList)
+
+
+def filter_flights(manualFlightList, userChoices):
+    DIST_COLUMN = 6 # The columns that correspond to the row
+    CARRIER_COLUMN = 7
+    ORIGIN_COLUMN = 8
+    DEST_COLUMN = 9
+    AIRCRAFT_COLUMN = 10
+    OR_STATE_COLUMN = 11
+    DEST_STATE_COLUMN = 12
+    MONTH_COLUMN = 13
+
+    emptyChoices = True
+    matchCounter = 0
+    matchList = []
+    filteredList = []
+
+    for criteria, choice in userChoices.items():
+        matchList.append(False)
+        if(choice != "None"):
+            matchList[matchCounter] = False
+            emptyChoices = False
+
+        matchCounter += 1
+
+    if(emptyChoices is False):
+        for flight in range(len(manualFlightList)):
+            matchCounter = 0
+
+            for criteria, choice in userChoices.items():
+                matchList[matchCounter] = True
+                if(choice != "None"):
+                    matchList[matchCounter] = False
+
+                matchCounter += 1
+
+            currentFlight = manualFlightList[flight]
+
+            if(userChoices["Distance"] != "None"):
+                convertedDistance = find_dist_range(currentFlight[DIST_COLUMN])
+
+                if(convertedDistance == userChoices["Distance"]):
+                    matchList[0] = True
+
+            if(userChoices["Carrier"] != "None"):
+                if(currentFlight[CARRIER_COLUMN] == userChoices["Carrier"]):
+                    matchList[1] = True
+
+            if(userChoices["Origin City"] != "None"):
+                if(currentFlight[ORIGIN_COLUMN] == userChoices["Origin City"]):
+                    matchList[2] = True
+
+            if(userChoices["Destination City"] != "None"):
+                if(currentFlight[DEST_COLUMN] == userChoices["Destination City"]):
+                    matchList[3] = True
+
+            if(userChoices["Aircraft"] != "None"):
+                if(currentFlight[AIRCRAFT_COLUMN] == userChoices["Aircraft"]):
+                    matchList[4] = True
+
+            if(userChoices["State Origin"] != "None"):
+                if(currentFlight[OR_STATE_COLUMN] == userChoices["State Origin"]):
+                    matchList[5] = True
+
+            if(userChoices["State Destination"] != "None"):
+                if(currentFlight[DEST_STATE_COLUMN] == userChoices["State Destination"]):
+                    matchList[6] = True
+
+            if(userChoices["Month"] != "None"):
+                if(currentFlight[MONTH_COLUMN] == userChoices["Month"]):
+                    matchList[7] = True
+
+            if False not in matchList:
+                filteredList.append(currentFlight)
+
+    # If there were no options selected
+    else:
+        return manualFlightList
+
+    # Return the list with the filtered flights
+    return filteredList
+
 
 
 def find_dist_range(distance):
