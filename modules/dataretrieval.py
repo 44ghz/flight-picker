@@ -11,28 +11,6 @@ def open_data(filename):
     except FileNotFoundError:
         tf.fnf_popup()
 
-def read_options(filename):
-    optionList = []
-
-    try:
-        os.chdir('data/options') # Change to options folder
-        with open(filename, 'r') as optionsFile:
-            for option in optionsFile:
-                currLine = option[:-1] # Get rid of the newline character
-                optionList.append(currLine) # Add it to the options list
-        os.chdir('..') # Go back to the main dir
-        os.chdir('..')
-        return optionList
-    except FileNotFoundError:
-        tf.fnf_popup()
-
-def write_options(optionList, filename):
-    os.chdir('data/options') # Change to options folder
-    with open(filename, 'w') as file:
-        for option in optionList:
-            file.write('%s\n' % option) # Adding each option to its file
-    os.chdir('..') # Go back to the main dir
-    os.chdir('..')
 
 def get_data(flightData, column):
     rows = len(flightData.index) # The number of rows in the DataFrame
@@ -45,6 +23,7 @@ def get_data(flightData, column):
     dataList.insert(0, "None") # Adding None as an option to the start of the list
     return dataList
 
+
 def get_aircraft_dict(aircraftData):
     rows = len(aircraftData.index) # The number of rows in the DataFrame
     nameDict = {} # The code accompanied by the name of the aircraft
@@ -55,6 +34,7 @@ def get_aircraft_dict(aircraftData):
         nameDict[currCode] = currName
 
     return nameDict
+
 
 def get_aircraft_names(aircraftData, aircraftList):
     nameDict = get_aircraft_dict(aircraftData)
@@ -68,6 +48,7 @@ def get_aircraft_names(aircraftData, aircraftList):
 
     aircraftNames = list(set(aircraftNames)) # Creating a set of the data (to eliminate duplicates), then sorting it and making it a list
     return aircraftNames
+
 
 def convert_df(flightData):
     COLUMNS = 12 # Number of relevant columns
@@ -104,11 +85,11 @@ def convert_df(flightData):
 
     for row in range(rows):
         currentFlight = [] # Reset the current row
-        currentFlight.append("")
+        #currentFlight.append("")
         for column in range(COLUMNS):
             currentFlight.append(flightData.iloc[row, column]) # Add the current cell to the current flight list
-        currentFlight[AIRCRAFT_COLUMN + 1] = nameDict[str(currentFlight[AIRCRAFT_COLUMN + 1])]
-        currentFlight[COLUMNS] = monthDict[currentFlight[COLUMNS]] # Replace the month number with the month name
+        currentFlight[AIRCRAFT_COLUMN] = nameDict[str(currentFlight[AIRCRAFT_COLUMN])] # Replace the aircraft code with the aircraft name
+        currentFlight[COLUMNS - 1] = monthDict[currentFlight[COLUMNS - 1]] # Replace the month number with the month name
         flights.append(currentFlight) # Add the new flight list to the list of flights
 
     return flights
