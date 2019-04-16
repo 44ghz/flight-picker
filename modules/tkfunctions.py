@@ -1,28 +1,39 @@
 import tkinter as tk
-import pandas as pd
 from tkinter import font
 from tkinter import ttk
 from modules import dataretrieval as dr
+from modules import results
 
 class OptionsCombobox():
-    def __init__(self, frame, list, row, column):
+    def __init__(self, frame, values, row, column):
         self._frame = frame
-        self._list = list
+        self._values = values
         self._row = row
         self._column = column
-        self._state = 'readonly'
+        self._state = 'disabled'
         self._default = "None"
-        self._createBox()
-        self._displayBox()
+        self._create_box()
+        self._display_box()
+        self.disable()
+        self.enable()
+        self.get_current()
 
-    def _createBox(self):
-        self._box = ttk.Combobox(self._frame, values = self._list, state = self._state)
+    def _create_box(self):
+        self._box = ttk.Combobox(self._frame, values = self._values, state = self._state)
         self._box.set(self._default)
 
-    def _displayBox(self):
+    def _display_box(self):
         self._box.grid(row = self._row, column = self._column)
         self._box.config(width = 13, justify = tk.LEFT)
 
+    def disable(self):
+        self._box.config(state = 'disabled')
+
+    def enable(self):
+        self._box.config(state = 'readonly')
+
+    def get_current(self):
+        return self._box.get()
 
 
 def fnf_popup():
@@ -36,41 +47,39 @@ def fnf_popup():
     fnfButton.pack()
 
 
-
-def create_auto_tabs(frame, listOfBests):
-    helvBold = font.Font(family = 'Helvetica', size = '11', weight = 'bold')
-    criteriaTabs = ttk.Notebook(frame) # The pages used to tab through the criteria
+def create_auto_panel(resultsFrame, listOfBests, flightsForCriteria):
+    criteriaTabs = ttk.Notebook(resultsFrame) # The pages used to tab through the criteria
 
     critDistance = ttk.Frame(criteriaTabs,
-        width = 1440,
+        width = 1695,
         height = 676)   # First page
 
     critCarrier = ttk.Frame(criteriaTabs,
-        width = 1440,
+        width = 1695,
         height = 676)   # Second page
 
     critOriginCity = ttk.Frame(criteriaTabs,
-        width = 1440,
+        width = 1695,
         height = 676)   # Third page
 
     critDestCity = ttk.Frame(criteriaTabs,
-        width = 1440,
+        width = 1695,
         height = 676)   # Fourth page
 
     critAircraft = ttk.Frame(criteriaTabs,
-        width = 1440,
+        width = 1695,
         height = 676)   # Fifth page
 
     critOriginState = ttk.Frame(criteriaTabs,
-        width = 1440,
+        width = 1695,
         height = 676)   # Sixth page
 
     critDestState = ttk.Frame(criteriaTabs,
-        width = 1440,
+        width = 1695,
         height = 676)   # Seventh page
 
     critMonth = ttk.Frame(criteriaTabs,
-        width = 1440,
+        width = 1695,
         height = 676)   # Eighth page
 
     criteriaTabs.add(critDistance, text = 'Distance')
@@ -83,17 +92,17 @@ def create_auto_tabs(frame, listOfBests):
     criteriaTabs.add(critMonth, text = 'Month') # Add each of the criteria to the tabs frame
     criteriaTabs.grid(row = 0, column = 0)
 
-    display_best(critDistance, listOfBests, 0)
-    display_best(critCarrier, listOfBests, 1)
-    display_best(critOriginCity, listOfBests, 2)
-    display_best(critDestCity, listOfBests, 3)
-    display_best(critAircraft, listOfBests, 4)
-    display_best(critOriginState, listOfBests, 5)
-    display_best(critDestState, listOfBests, 6)
-    display_best(critMonth, listOfBests, 7)
+    display_best(critDistance, listOfBests, 0, flightsForCriteria)
+    display_best(critCarrier, listOfBests, 1, flightsForCriteria)
+    display_best(critOriginCity, listOfBests, 2, flightsForCriteria)
+    display_best(critDestCity, listOfBests, 3, flightsForCriteria)
+    display_best(critAircraft, listOfBests, 4, flightsForCriteria)
+    display_best(critOriginState, listOfBests, 5, flightsForCriteria)
+    display_best(critDestState, listOfBests, 6, flightsForCriteria)
+    display_best(critMonth, listOfBests, 7, flightsForCriteria)
 
 
-def display_best(frame, listOfBests, desiredCriteria):
+def display_best(resultsFrame, listOfBests, desiredCriteria, flightsForCriteria):
     critDict = {}
     critDict[0] = "distance (in miles)"
     critDict[1] = "carrier"
@@ -110,14 +119,14 @@ def display_best(frame, listOfBests, desiredCriteria):
     bestCriteriaPerc = listOfBests[desiredCriteria][0][1][1] # The best criteria percentage
 
     bestCriteria.set("The best " + critDict[desiredCriteria] + " to fly is: " + bestCriteriaName +
-        "\nwith its average rank of: " + str(bestCriteriaRank) + " points" +
+        "\nwith its average score of: " + str(bestCriteriaRank) + " points" +
         "\nand its average percentage of: " + str(bestCriteriaPerc) + "%")
 
-    bestCriteriaLabel = tk.Label(frame, textvariable = bestCriteria, bg = 'white', width = 75)
+    bestCriteriaLabel = tk.Label(resultsFrame, textvariable = bestCriteria, bg = 'white', width = 75)
     bestCriteriaLabel.pack(side = 'top')
     #bestCriteriaLabel.grid(row = 0, column = 0, sticky = 'nw')
 
-    criteriaTree = ttk.Treeview(frame)
+    criteriaTree = ttk.Treeview(resultsFrame)
     criteriaTree["columns"] = ("1", "2", "3")
     criteriaTree['show'] = 'headings'
     criteriaTree.column("1", width = 200, anchor = 'c')
@@ -125,8 +134,8 @@ def display_best(frame, listOfBests, desiredCriteria):
     criteriaTree.column("3", width = 200, anchor = 'c')
 
     criteriaTree.heading("1", text = "Criteria")
-    criteriaTree.heading("2", text = "Average Rank")
-    criteriaTree.heading("3", text = "Average % of Success")
+    criteriaTree.heading("2", text = "Average Score")
+    criteriaTree.heading("3", text = "Average Chance of Success")
 
     criteriaTree.config(height = 12)
 
@@ -135,42 +144,52 @@ def display_best(frame, listOfBests, desiredCriteria):
     for option in range(len(listOfBests[desiredCriteria])): # For every option in the desired criteria
         criteriaTree.insert("", 'end', values =
             (listOfBests[desiredCriteria][option][0],
-                listOfBests[desiredCriteria][option][1][0],
-                    listOfBests[desiredCriteria][option][1][1]))
-        # Insert into the tree: The month for the first column, the score for the second column, and the percentage for the third column
+             listOfBests[desiredCriteria][option][1][0],
+             listOfBests[desiredCriteria][option][1][1]))
+        # Insert into the tree: The name for the first column, the score for the second column, and the percentage for the third column
 
-    flightTree = ttk.Treeview(frame)
-    flightTree = configure_treeview(frame, flightTree)
+    flightTree = ttk.Treeview(resultsFrame)
+    configure_treeview(resultsFrame, flightTree)
 
-
-def create_manual_results_panel(frame, flightData):
-    flightList = dr.convert_df(flightData)
-
-    text = tk.Label(frame, text = "This panel will be for manual results")
-    text.pack(side = 'top', fill = 'both', expand = 1)
-
-    flightTree = ttk.Treeview(frame)
-    flightTree = configure_treeview(frame, flightTree)
-
-    for flight in range(len(flightList)): # Adding each flight to the tree view
-        flightTree.insert("", 'end', values = flightList[flight])
+    criteriaTree.bind("<ButtonRelease-1>", lambda _: select_item(criteriaTree, flightTree, desiredCriteria, flightsForCriteria))
 
 
+def select_item(criteriaTree, flightTree, desiredCriteria, flightsForCriteria):
+    curItem = criteriaTree.focus()
 
-def configure_treeview(frame, flightTree):
-    flightTree.config(height = 20) # 33 for max height
+    # curItem is the current listOfBests option (criteria with score and percentage)
+    # currentFlights takes the list of organized criteria with their dicts
+    # and gets the dict of the desiredCriteria, and uses the name of the criteria from the tree as the index of the dict
+    currentFlights = flightsForCriteria[desiredCriteria][criteriaTree.item(curItem)["values"][0]]
+
+    flightTree.delete(*flightTree.get_children())
+
+    for flight in range(len(currentFlights)):
+        flightTree.insert("", 'end', values = currentFlights[flight])
+
+
+def create_manual_panel(resultsFrame, filteredList):
+    flightTree = ttk.Treeview(resultsFrame)
+    configure_treeview(resultsFrame, flightTree)
+
+    for flight in range(len(filteredList)): # Adding each flight to the tree view
+        flightTree.insert("", 'end', values = filteredList[flight])
+
+
+def configure_treeview(resultsFrame, flightTree):
+    flightTree.config(height = 38) # 38 for max height
     flightTree.pack(side = 'left', expand = 1)
     #flightTree.grid(row = 1, column = 0)
 
-    treeScrollBar = ttk.Scrollbar(frame,
+    treeScrollBar = ttk.Scrollbar(resultsFrame,
         orient = "vertical",
         command = flightTree.yview)
     treeScrollBar.pack(side = 'right', fill = 'y')
     #treeScrollBar.grid(row = 1, column = 2, sticky = 'e')
 
-    flightTree.configure(yscrollcommand= treeScrollBar.set)
+    flightTree.configure(yscrollcommand = treeScrollBar.set)
 
-    flightTree["columns"] = ("1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12", "13")
+    flightTree["columns"] = ("1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12", "13", "14")
     flightTree['show'] = 'headings'
 
     # Adding all columns
@@ -187,20 +206,51 @@ def configure_treeview(frame, flightTree):
     flightTree.column("11", width = 110, anchor = 'c')
     flightTree.column("12", width = 110, anchor = 'c')
     flightTree.column("13", width = 110, anchor = 'c')
+    flightTree.column("14", width = 110, anchor = 'c')
 
     # Adding all headings
-    flightTree.heading("1", text = "% of Success")
-    flightTree.heading("2", text = "Scheduled")
-    flightTree.heading("3", text = "Performed")
-    flightTree.heading("4", text = "Seats")
-    flightTree.heading("5", text = "Passengers")
-    flightTree.heading("6", text = "Distance (mi.)")
-    flightTree.heading("7", text = "Carrier")
-    flightTree.heading("8", text = "Origin")
-    flightTree.heading("9", text = "Destination")
-    flightTree.heading("10", text = "Aircraft")
-    flightTree.heading("11", text = "Origin State")
-    flightTree.heading("12", text = "Dest State")
-    flightTree.heading("13", text = "Month")
+    flightTree.heading("1", text = "Points")
+    flightTree.heading("2", text = "% of Success")
+    flightTree.heading("3", text = "Scheduled")
+    flightTree.heading("4", text = "Performed")
+    flightTree.heading("5", text = "Seats")
+    flightTree.heading("6", text = "Passengers")
+    flightTree.heading("7", text = "Distance (mi.)")
+    flightTree.heading("8", text = "Carrier")
+    flightTree.heading("9", text = "Origin")
+    flightTree.heading("10", text = "Destination")
+    flightTree.heading("11", text = "Aircraft")
+    flightTree.heading("12", text = "Origin State")
+    flightTree.heading("13", text = "Dest State")
+    flightTree.heading("14", text = "Month")
 
-    return flightTree
+
+def clear_results(resultsFrame):
+    for child in resultsFrame.winfo_children():
+        child.destroy
+
+    resultsFrame.destroy
+
+def to_main_menu(resultsFrame):
+    clear_results(resultsFrame)
+    create_main_label(resultsFrame)
+
+
+def create_main_label(resultsFrame):
+    helvBig = font.Font(family = 'Helvetica', size = '14')
+    mainLabel = tk.Label(resultsFrame, text =
+        """
+        Welcome to Flight Picker.\n
+        There are two modes to choose from: Automatic and Manual.\n
+        Automatic will choose the best flights based on predetermined criteria.
+        Use the tabs to cycle between the criteria. Select a specific item in the criteria list to view its flights.\n
+        Manual will allow you to filter out the best flights for any criteria and combination of criteria.
+        If different options are selected, use the 'Find Flights' button to update the results window.\n
+        -------------------------------------------------------------------------------------------------------------------------------------\n
+        Choose a mode to the left and click 'Find Flights' to generate the results.\n
+        Use the 'Main Menu' choice to return to this screen.\n
+        Click 'Update Data' to refresh the options for Manual mode if they have changed within
+        the application or within the data file.\n""",
+        justify = tk.LEFT,
+        font = helvBig)
+    mainLabel.grid(row = 0, column = 0, sticky = 'nsew')
