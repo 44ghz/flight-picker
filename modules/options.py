@@ -157,11 +157,16 @@ def write_options(optionList, filename):
     os.chdir('..')
 
 
-def disable_options(comboBoxList):
+def disable_options(comboBoxList, resetButton, randomButton):
     for box in range(len(comboBoxList)):
         comboBoxList[box].disable()
 
+    resetButton.config(state = 'disabled')
+    randomButton.config(state = 'disabled')
 
-def enable_options(comboBoxList):
+def enable_options(comboBoxList, resetButton, randomButton):
     for box in range(len(comboBoxList)):
         comboBoxList[box].enable()
+
+    resetButton.config(state = 'normal')
+    randomButton.config(state = 'normal')

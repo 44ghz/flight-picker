@@ -1,12 +1,13 @@
 import tkinter as tk # Main GUI capabilities
+import random # For random options
 from tkinter import font # For changing fonts in widgets
 from tkinter import ttk # Various other tkinter widgets (mainly combobox)
 from tkinter import PhotoImage # For taskbar icon
 from modules import tkfunctions as tf # Custom TKinter functions
 from modules import dataretrieval as dr # Custom data retrieval functions
 from modules import options as op # To create the Options panel
-from modules import results
-from ttkthemes import themed_tk
+from modules import results # Creating the results from the user input
+from ttkthemes import themed_tk # For window theme
 
 def callback(mode, resultsFrame, flightList, comboBoxList): # The command to use when finding flights
     tf.clear_results(resultsFrame)
@@ -14,6 +15,20 @@ def callback(mode, resultsFrame, flightList, comboBoxList): # The command to use
     userChoices = get_user_choices(comboBoxList)
 
     results.find_flights(mode, resultsFrame, flightList, userChoices)
+
+def reset_choices(comboBoxList):
+    for combobox in comboBoxList:
+        combobox.reset()
+
+
+def random_choices(comboBoxList):
+    for comboBox in range(2):
+        randomOption = random.randint(1, len(comboBoxList[comboBox].get_values()))
+        comboBoxList[comboBox].set_current(randomOption)
+
+    randomOption = random.randint(1, len(comboBoxList[7].get_values()))
+    comboBoxList[7].set_current(randomOption)
+
 
 def get_user_choices(comboBoxList):
     optionsDict = {}
@@ -76,16 +91,18 @@ modeCanvas.grid(row = 0, column = 0)
 mode = tk.IntVar() # the current mode being used (set to Automatic)
 mode.set(1)
 
+###################################
+
 choiceAuto = tk.Radiobutton(modeFrame, text = "Automatic", # Radio button for Automatic Mode
     variable = mode,
     value = 1,
-    command = lambda: op.disable_options(comboBoxList))
+    command = lambda: op.disable_options(comboBoxList, resetOptionsButton, randomOptionsButton))
 choiceAuto.grid(row = 1, column = 0, sticky = 'w')
 
 choiceMan = tk.Radiobutton(modeFrame, text = "Manual", # Radio button for Manual Mode
     variable = mode,
     value = 2,
-    command = lambda: op.enable_options(comboBoxList))
+    command = lambda: op.enable_options(comboBoxList, resetOptionsButton, randomOptionsButton))
 choiceMan.grid(row = 2, column = 0, sticky = 'w')
 
 ###################################
@@ -104,17 +121,37 @@ optionsFrame = tk.Frame(leftFrame, # Frame in the left column, but under Mode Se
     height = 785)
 optionsFrame.grid(row = 2, column = 0)
 optionsFrame.grid_propagate(0)
-optionsFrame.grid_rowconfigure(17, weight = 0)
-optionsFrame.grid_rowconfigure(18, weight = 0)
 
-optionsCanvas = tk.Canvas(optionsFrame, width = 135, height = 35)
+optionsCanvas = tk.Canvas(optionsFrame,
+    width = 60,
+    height = 35)
 optionsCanvas.create_text(8, 18, text = "Options", anchor = tk.W)
 optionsCanvas.create_line(9, 26, 60, 26) # Creating line for underneath Options
-optionsCanvas.grid(row = 0, column = 0)
+optionsCanvas.grid(row = 0, column = 0, sticky = 'w')
 
 comboBoxList = op.create_options(optionsFrame) # Creating the options to use for manual selection
-op.disable_options(comboBoxList)
 
+buttonFrame = tk.Frame(optionsFrame)
+buttonFrame.grid(row = 0, column = 0, sticky = 'e')
+
+reset = PhotoImage(file = 'reset.gif')
+# helvSmall = font.Font(family = 'Helvetica', size = '9')
+resetOptionsButton = tk.Button(buttonFrame,
+    width = 20,
+    height = 20,
+    image = reset,
+    command = lambda: reset_choices(comboBoxList))
+resetOptionsButton.grid(row = 0, column = 0, sticky = 'e')
+
+randomImage = PhotoImage(file = 'random.gif')
+randomOptionsButton = tk.Button(buttonFrame,
+    width = 20,
+    height = 20,
+    image = randomImage,
+    command = lambda: random_choices(comboBoxList))
+randomOptionsButton.grid(row = 0, column = 1, sticky = 'e')
+
+op.disable_options(comboBoxList, resetOptionsButton, randomOptionsButton)
 ###################################
 
 separator = tk.Frame(mainWindow, # Frame for vertical separator between options and statistics
@@ -130,12 +167,11 @@ separator.grid(row = 0, column = 1, sticky = 'w')
 resultsFrame = tk.Frame(mainWindow,
     width = 1560,
     height = 785)
-resultsFrame.grid(row = 0, column = 2, sticky = 'nsew')
+resultsFrame.grid(row = 0, column = 2, sticky = 'w')
 resultsFrame.grid_propagate(0)
 resultsFrame.grid_rowconfigure(0, weight = 1)
 resultsFrame.grid_columnconfigure(0, weight = 1)
 
-tf.create_main_label(resultsFrame)
 
 #Find Flights button
 buttonSeparator = tk.Frame(optionsFrame, # Separator between criteria and buttons
@@ -194,6 +230,6 @@ buffer4.grid(row = 25, column = 0)
 
 exitButton.grid(row = 26, column = 0)
 
-#results.automatic(resultsFrame, flightData) # Comment out to access manual mode
+tf.create_main_label(resultsFrame)
 
 mainWindow.mainloop()
