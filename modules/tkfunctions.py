@@ -4,6 +4,7 @@ from tkinter import ttk
 from modules import dataretrieval as dr
 from modules import results
 
+
 class OptionsCombobox():
     def __init__(self, frame, values, row, column):
         self._frame = frame
@@ -17,6 +18,8 @@ class OptionsCombobox():
         self.disable()
         self.enable()
         self.get_current()
+        self.get_values()
+        self.reset()
 
     def _create_box(self):
         self._box = ttk.Combobox(self._frame, values = self._values, state = self._state)
@@ -35,17 +38,27 @@ class OptionsCombobox():
     def get_current(self):
         return self._box.get()
 
+    def set_current(self, val):
+        self._box.set(self._box["values"][val - 1])
+
+    def get_values(self):
+        return self._box["values"]
+
+    def reset(self):
+        self._box.set(self._default)
+
 
 def fnf_popup():
     win = tk.Tk()
     win.title("File Error")
 
     fnfLabel = tk.Label(win, text = "The data file was not found.\n Please ensure the file 'ProjectData.csv' is present in the data folder.")
-    fnfLabel.pack()
+    fnfLabel.grid()
 
     fnfButton = tk.Button(text = "OK", command = win.destroy)
-    fnfButton.pack()
+    fnfButton.grid()
 
+    return win
 
 def create_auto_panel(resultsFrame, listOfBests, flightsForCriteria):
     criteriaTabs = ttk.Notebook(resultsFrame) # The pages used to tab through the criteria
@@ -82,14 +95,14 @@ def create_auto_panel(resultsFrame, listOfBests, flightsForCriteria):
         width = 1695,
         height = 676)   # Eighth page
 
-    criteriaTabs.add(critDistance, text = 'Distance')
-    criteriaTabs.add(critCarrier, text = 'Carrier')
-    criteriaTabs.add(critOriginCity, text = 'Origin City')
-    criteriaTabs.add(critDestCity, text = 'Destination City')
-    criteriaTabs.add(critAircraft, text = 'Aircraft')
-    criteriaTabs.add(critOriginState, text = 'Origin State')
-    criteriaTabs.add(critDestState, text = 'Destination State')
-    criteriaTabs.add(critMonth, text = 'Month') # Add each of the criteria to the tabs frame
+    criteriaTabs.add(critDistance, text =    "               Distance              ")
+    criteriaTabs.add(critCarrier, text =     "               Carrier               ")
+    criteriaTabs.add(critOriginCity, text =  "              Origin City            ")
+    criteriaTabs.add(critDestCity, text =    "           Destination City          ")
+    criteriaTabs.add(critAircraft, text =    "               Aircraft              ")
+    criteriaTabs.add(critOriginState, text = "             Origin State            ")
+    criteriaTabs.add(critDestState, text =   "           Destination State         ")
+    criteriaTabs.add(critMonth, text =       "                   Month                ")
     criteriaTabs.grid(row = 0, column = 0)
 
     display_best(critDistance, listOfBests, 0, flightsForCriteria)
@@ -118,13 +131,12 @@ def display_best(resultsFrame, listOfBests, desiredCriteria, flightsForCriteria)
     bestCriteriaRank = listOfBests[desiredCriteria][0][1][0] # The best criteria rank
     bestCriteriaPerc = listOfBests[desiredCriteria][0][1][1] # The best criteria percentage
 
-    bestCriteria.set("The best " + critDict[desiredCriteria] + " to fly is: " + bestCriteriaName +
-        "\nwith its average score of: " + str(bestCriteriaRank) + " points" +
-        "\nand its average percentage of: " + str(bestCriteriaPerc) + "%")
+    bestCriteria.set("Best " + critDict[desiredCriteria] + ": " + bestCriteriaName +
+        "\nAverage score: " + str(bestCriteriaRank) + " points" +
+        "\nAverage percentage: " + str(bestCriteriaPerc) + "%")
 
-    bestCriteriaLabel = tk.Label(resultsFrame, textvariable = bestCriteria, bg = 'white', width = 75)
+    bestCriteriaLabel = tk.Label(resultsFrame, textvariable = bestCriteria, bg = 'white', width = 75, justify = tk.CENTER)
     bestCriteriaLabel.pack(side = 'top')
-    #bestCriteriaLabel.grid(row = 0, column = 0, sticky = 'nw')
 
     criteriaTree = ttk.Treeview(resultsFrame)
     criteriaTree["columns"] = ("1", "2", "3")
@@ -140,7 +152,6 @@ def display_best(resultsFrame, listOfBests, desiredCriteria, flightsForCriteria)
     criteriaTree.config(height = 12)
 
     criteriaTree.pack(side = 'top')
-    #criteriaTree.grid(row = 0, column = 1)
     for option in range(len(listOfBests[desiredCriteria])): # For every option in the desired criteria
         criteriaTree.insert("", 'end', values =
             (listOfBests[desiredCriteria][option][0],
@@ -169,6 +180,17 @@ def select_item(criteriaTree, flightTree, desiredCriteria, flightsForCriteria):
 
 
 def create_manual_panel(resultsFrame, filteredList):
+    helvBig = font.Font(family = 'Helvetica', size = '14')
+
+    if len(filteredList) is 0:
+        clear_results(resultsFrame)
+        noItemsLabel = tk.Label(resultsFrame,
+            text = "There were no flights that match your criteria. Alter your choices and try again.",
+            font = helvBig,
+            justify = tk.LEFT)
+        noItemsLabel.grid(row = 0, column = 0, sticky = 'nsew')
+        return
+
     flightTree = ttk.Treeview(resultsFrame)
     configure_treeview(resultsFrame, flightTree)
 
@@ -178,14 +200,12 @@ def create_manual_panel(resultsFrame, filteredList):
 
 def configure_treeview(resultsFrame, flightTree):
     flightTree.config(height = 38) # 38 for max height
-    flightTree.pack(side = 'left', expand = 1)
-    #flightTree.grid(row = 1, column = 0)
+    flightTree.pack(side = 'left')
 
     treeScrollBar = ttk.Scrollbar(resultsFrame,
         orient = "vertical",
         command = flightTree.yview)
-    treeScrollBar.pack(side = 'right', fill = 'y')
-    #treeScrollBar.grid(row = 1, column = 2, sticky = 'e')
+    treeScrollBar.pack(side = 'right', fill = 'y', expand = 1)
 
     flightTree.configure(yscrollcommand = treeScrollBar.set)
 
@@ -227,9 +247,8 @@ def configure_treeview(resultsFrame, flightTree):
 
 def clear_results(resultsFrame):
     for child in resultsFrame.winfo_children():
-        child.destroy
+        child.pack_forget()
 
-    resultsFrame.destroy
 
 def to_main_menu(resultsFrame):
     clear_results(resultsFrame)
