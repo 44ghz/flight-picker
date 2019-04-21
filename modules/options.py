@@ -1,16 +1,22 @@
-import os
-import tkinter as tk
-import pandas as pd
-from tkinter import font
-from modules import dataretrieval as dr
-from modules import tkfunctions as tf
+import os                                # To change directories
+import tkinter as tk                     # Standard Tkinter functions
+from tkinter import font                 # For custom fonts
+from modules import dataretrieval as dr  # Custom TKinter functions
+from modules import tkfunctions as tf    # Custom data retrieval functions
 
-def create_options(leftFrame):
+
+################################################################################
+#   FUNCTION NAME: create_options
+#   DESCRIPTION: Creates the option boxes for use with manual mode. Includes formatting
+#   PARAMETERS: optionsFrame    (tk.Frame): The Frame in which to display the options boxes
+#   RETURN VALUES: comboBoxList (List[OptionsCombobox]): The list of comboboxes that correspond to user options
+################################################################################
+def create_options(optionsFrame):
     helvBold = font.Font(family = 'Helvetica', size = '11', weight = 'bold')
 
     comboBoxList = [] # List of the comboboxes used for options
-
     optionsList = get_options_lists() # Getting the options from files
+
     distanceList = optionsList[0]
     carrierList = optionsList[1]
     originList = optionsList[2]
@@ -20,57 +26,62 @@ def create_options(leftFrame):
     stateDestinationList = optionsList[6]
     monthList = optionsList[7]
 
-    ###################################
+
+    ############################################################################
 
     # Distance selection menu
-    distanceLabel = tk.Label(leftFrame, text = "Distance (mi.)", font = helvBold)
+    distanceLabel = tk.Label(optionsFrame, text = "Distance (mi.)", font = helvBold)
     distanceLabel.grid(row = 1, column = 0, sticky = 'w', ipadx = 6)
-    distanceMenu = tf.OptionsCombobox(leftFrame, distanceList, 2, 0)
+    distanceMenu = tf.OptionsCombobox(optionsFrame, distanceList, 2, 0)
     comboBoxList.append(distanceMenu)
 
     # Carrier selection menu
-    carrierLabel = tk.Label(leftFrame, text = "\nCarrier", font = helvBold)
+    carrierLabel = tk.Label(optionsFrame, text = "\nCarrier", font = helvBold)
     carrierLabel.grid(row = 3, column = 0, sticky = 'w', ipadx = 6)
-    carrierMenu = tf.OptionsCombobox(leftFrame, carrierList, 4, 0)
+    carrierMenu = tf.OptionsCombobox(optionsFrame, carrierList, 4, 0)
     comboBoxList.append(carrierMenu)
 
     # Origin City selection menu
-    originLabel = tk.Label(leftFrame, text = "\nOrigin City", font = helvBold)
+    originLabel = tk.Label(optionsFrame, text = "\nOrigin City", font = helvBold)
     originLabel.grid(row = 5, column = 0, sticky = 'w', ipadx = 6)
-    originMenu = tf.OptionsCombobox(leftFrame, originList, 6, 0)
+    originMenu = tf.OptionsCombobox(optionsFrame, originList, 6, 0)
     comboBoxList.append(originMenu)
 
     # Destination City selection menu
-    destinationLabel = tk.Label(leftFrame, text = "\nDestination City", font = helvBold)
+    destinationLabel = tk.Label(optionsFrame, text = "\nDestination City", font = helvBold)
     destinationLabel.grid(row = 7, column = 0, sticky = 'w', ipadx = 6)
-    destinationMenu = tf.OptionsCombobox(leftFrame, destinationList, 8, 0)
+    destinationMenu = tf.OptionsCombobox(optionsFrame, destinationList, 8, 0)
     comboBoxList.append(destinationMenu)
 
     # Aircraft selection menu
-    aircraftLabel = tk.Label(leftFrame, text = "\nAircraft", font = helvBold)
+    aircraftLabel = tk.Label(optionsFrame, text = "\nAircraft", font = helvBold)
     aircraftLabel.grid(row = 9, column = 0, sticky = 'w', ipadx = 6)
-    aircraftMenu = tf.OptionsCombobox(leftFrame, aircraftList, 10, 0)
+    aircraftMenu = tf.OptionsCombobox(optionsFrame, aircraftList, 10, 0)
     comboBoxList.append(aircraftMenu)
 
     # State origin selection menu
-    stateOriginLabel = tk.Label(leftFrame, text = "\nState Origin", font = helvBold)
+    stateOriginLabel = tk.Label(optionsFrame, text = "\nState Origin", font = helvBold)
     stateOriginLabel.grid(row = 11, column = 0, sticky = 'w', ipadx = 6)
-    stateOriginMenu = tf.OptionsCombobox(leftFrame, stateDestinationList, 12, 0)
+    stateOriginMenu = tf.OptionsCombobox(optionsFrame, stateDestinationList, 12, 0)
     comboBoxList.append(stateOriginMenu)
 
     # State destination selection menu
-    stateDestinationLabel = tk.Label(leftFrame, text = "\nState Destination", font = helvBold)
+    stateDestinationLabel = tk.Label(optionsFrame, text = "\nState Destination", font = helvBold)
     stateDestinationLabel.grid(row = 13, column = 0, sticky = 'w', ipadx = 6)
-    stateDestinationMenu = tf.OptionsCombobox(leftFrame, stateOriginList, 14, 0)
+    stateDestinationMenu = tf.OptionsCombobox(optionsFrame, stateOriginList, 14, 0)
     comboBoxList.append(stateDestinationMenu)
 
     # Month selection menu
-    monthLabel = tk.Label(leftFrame, text = "\nMonth", font = helvBold)
+    monthLabel = tk.Label(optionsFrame, text = "\nMonth", font = helvBold)
     monthLabel.grid(row = 15, column = 0, sticky = 'w', ipadx = 6)
-    monthMenu = tf.OptionsCombobox(leftFrame, monthList, 16, 0)
+    monthMenu = tf.OptionsCombobox(optionsFrame, monthList, 16, 0)
     comboBoxList.append(monthMenu)
 
-    buffer = tk.Frame(leftFrame,
+    ############################################################################
+
+
+    # Creating a small space between the boxes and the separator
+    buffer = tk.Frame(optionsFrame,
         height = 10,
         width = 135)
 
@@ -79,6 +90,12 @@ def create_options(leftFrame):
     return comboBoxList
 
 
+################################################################################
+#   FUNCTION NAME: get_options_lists
+#   DESCRIPTION: Reads the associated data files and returns a list with the unique options
+#   PARAMETERS: none
+#   RETURN VALUES: optionsList (List[List[String]]): A list of lists with unique options for every criterion
+################################################################################
 def get_options_lists():
     optionsList = [] # The list of lists for options
 
@@ -95,7 +112,14 @@ def get_options_lists():
     return optionsList
 
 
-def update_options_lists(flightData):
+################################################################################
+#   FUNCTION NAME: update_options_lists
+#   DESCRIPTION: Updates the unique options found in the intermediate .dat files
+#   PARAMETERS: none
+#   RETURN VALUES: none
+################################################################################
+def update_options_lists():
+    # The columns that correspond to the rows
     CARRIER_COLUMN = 5
     ORIGIN_CITY_COLUMN = 6
     DESTINATION_CITY_COLUMN = 7
@@ -103,10 +127,17 @@ def update_options_lists(flightData):
     STATE_ORIGIN_COLUMN = 9
     STATE_DESTINATION_COLUMN = 10
 
-    aircraftData = dr.open_data('AircraftNames.csv')
 
+    flightData = dr.open_data('ProjectData.csv') # Opening the .csv for data and converting to a DataFrame
+    aircraftData = dr.open_data('AircraftNames.csv') # Converting the DataFrame to lists
+
+
+    ############################################################################
+    # Writing the options to the .dat files
+
+    # Creating list for the distances
     distanceList = ["None", "0 - 99", "100 - 199", "200 - 299", "300 - 399", "400 - 499",
-        "500 - 999", "1000 - 1499", "1500 - 1999", "2000 - 2499", ">2500"]
+                    "500 - 999", "1000 - 1499", "1500 - 1999", "2000 - 2499", ">2500"]
     write_options(distanceList, "distances.dat")
 
     carrierList = dr.get_data(flightData, CARRIER_COLUMN) # Creating list for the carriers
@@ -128,45 +159,82 @@ def update_options_lists(flightData):
     stateDestinationList = dr.get_data(flightData, STATE_DESTINATION_COLUMN) # Creating list for state destinations
     write_options(stateDestinationList, "statedestinations.dat")
 
-    monthList = ["None", "January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"]
+    # Creating list for months
+    monthList = ["None", "January", "February", "March", "April", "May", "June",
+                 "July", "August", "September", "October", "November", "December"]
     write_options(monthList, "months.dat")
 
 
+################################################################################
+#   FUNCTION NAME: read_options
+#   DESCRIPTION: Reads in options from the file specified and compiles them into a list to return
+#   PARAMETERS: filename (String): The requested filename from which the options will come
+#   RETURN VALUES: none
+################################################################################
 def read_options(filename):
-    optionList = []
+    optionsList = []
 
     try:
         os.chdir('data/options') # Change to options folder
         with open(filename, 'r') as optionsFile:
             for option in optionsFile:
                 currLine = option[:-1] # Get rid of the newline character
-                optionList.append(currLine) # Add it to the options list
+                optionsList.append(currLine) # Add it to the options list
         os.chdir('..') # Go back to the main dir
         os.chdir('..')
-        return optionList
+        return optionsList
     except FileNotFoundError:
         tf.fnf_popup()
 
 
-def write_options(optionList, filename):
+################################################################################
+#   FUNCTION NAME: write_options
+#   DESCRIPTION: Takes a list of options and writes them to a .dat file. Will likely
+#                be more efficient than parsing through a .csv every time
+#   PARAMETERS: filename    (String): The requested filename from which the options will come
+#               optionsList (List[List[String]]): A list of lists with unique options for every criterion
+#   RETURN VALUES: none
+################################################################################
+def write_options(optionsList, filename):
     os.chdir('data/options') # Change to options folder
     with open(filename, 'w') as file:
-        for option in optionList:
-            file.write('%s\n' % option) # Adding each option to its file
+        for option in optionsList:
+            file.write('%s\n' % option) # Adding each option to the file
     os.chdir('..') # Go back to the main dir
     os.chdir('..')
 
 
+################################################################################
+#   FUNCTION NAME: disable_options
+#   DESCRIPTION: Disables the user options and the option buttons (reset and random).
+#                User should not have access to these when not in Manual mode
+#   PARAMETERS: comboBoxList (List[tk.Combobox]): The list of comboboxes to alter
+#               resetButton  (tk.Button): A button to reset the user choices
+#               randomButton (tk.Button): A button to randomize the user choices
+#   RETURN VALUES: none
+################################################################################
 def disable_options(comboBoxList, resetButton, randomButton):
-    for box in range(len(comboBoxList)):
-        comboBoxList[box].disable()
+    for box in comboBoxList: # Disabling every box in the list
+        box.disable()
 
+    # Disabling both buttons
     resetButton.config(state = 'disabled')
     randomButton.config(state = 'disabled')
 
-def enable_options(comboBoxList, resetButton, randomButton):
-    for box in range(len(comboBoxList)):
-        comboBoxList[box].enable()
 
+################################################################################
+#   FUNCTION NAME: enable_options
+#   DESCRIPTION: Enables the user options and the option buttons (reset and random).
+#                Occurs when user selects Manual mode.
+#   PARAMETERS: comboBoxList (List[tk.Combobox]): The list of comboboxes to alter
+#               resetButton  (tk.Button): A button to reset the user choices
+#               randomButton (tk.Button): A button to randomize the user choices
+#   RETURN VALUES: none
+################################################################################
+def enable_options(comboBoxList, resetButton, randomButton):
+    for box in comboBoxList: # Enabling every box in the list
+        box.enable()
+
+    # Enabling both buttons
     resetButton.config(state = 'normal')
     randomButton.config(state = 'normal')
