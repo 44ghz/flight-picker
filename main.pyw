@@ -83,20 +83,15 @@ def get_user_choices(comboBoxList):
 
 ################################################################################
 
-mainWindow = themed_tk.ThemedTk() # The main window of display
-mainWindow.set_theme('black')     # Theme selection
-
+dr.data_exists()   # Touching the data files to make sure they exist
 
 # Converting the DataFrame to a list representation, then ranking the flights by their score
 flightList = results.rank_flights()
 
-icon = PhotoImage(file = 'plane.gif')                  # The application icon
-mainWindow.iconphoto(True, icon)                       # Applying the icon to the window
-mainWindow.title("Flight Picker")                      # The title of the GUI window
-mainWindow.option_add("*Button.Background", "#e0e0e0") # Changing button colors
-mainWindow.option_add("*Button.Foreground", "#444444")
-mainWindow.geometry("1750x785")                        # Scale of the window
-mainWindow.resizable(0, 0)                             # Cannot resize window (x, y)
+mainWindow = tf.common_theme()    # The main window of display
+mainWindow.title("Flight Picker") # The title of the GUI window
+mainWindow.geometry("1750x785")   # Scale of the window
+mainWindow.resizable(0, 0)        # Cannot resize window (x, y)
 
 mainWindow.grid_rowconfigure(0, weight = 2)
 mainWindow.grid_columnconfigure(0, weight = 0)  # Left Panel

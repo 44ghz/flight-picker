@@ -3,6 +3,8 @@ from tkinter import font                # For changing fonts in widgets
 from tkinter import ttk                 # Various other tkinter widgets (mainly combobox)
 from modules import dataretrieval as dr # Custom data retrieval functions
 from modules import results             # Creating the results from the user input
+from ttkthemes import themed_tk         # For window theme
+from tkinter import PhotoImage          # For taskbar icon
 
 
 ################################################################################
@@ -53,17 +55,53 @@ class OptionsCombobox():
         self._box.set(self._default)
 
 
-def fnf_popup():
-    win = tk.Tk()
-    win.title("File Error")
+################################################################################
+#   FUNCTION NAME: common_theme
+#   DESCRIPTION: Sets a common theme for use with any window within the program
+#   PARAMETERS: none
+#   RETURN VALUES: window (themed_tk.ThemedTk): The window with options applied
+################################################################################
+def common_theme():
+    window = themed_tk.ThemedTk()
+    window.set_theme('black') # Theme selection
+    window.option_add("*Button.Background", "#e0e0e0") # Changing button colors
+    window.option_add("*Button.Foreground", "#444444")
+    icon = PhotoImage(file = 'plane.gif')              # The application icon
+    window.iconphoto(True, icon)
 
-    fnfLabel = tk.Label(win, text = "The data file was not found.\n Please ensure the file 'ProjectData.csv' is present in the data folder.")
-    fnfLabel.grid()
+    return window
 
-    fnfButton = tk.Button(text = "OK", command = win.destroy)
-    fnfButton.grid()
 
-    return win
+################################################################################
+#   FUNCTION NAME: file_not_found
+#   DESCRIPTION: Alerts the user that data files are missing, and will not continue
+#                with execution unless the error is fixed
+#   PARAMETERS: none
+#   RETURN VALUES: none
+################################################################################
+def file_not_found():
+    def error(window):
+        window.destroy
+        exit()
+
+    popupWindow = common_theme()
+    popupWindow.title("File Error")
+    popupWindow.resizable(0, 0)
+
+    fnfLabel = tk.Label(popupWindow, text =
+    """
+    Flight Picker is missing data files.
+    Please confirm 'ProjectData.csv' and 'AircraftNames.csv' are in the data folder and restart the program.
+    """, justify = tk.LEFT)
+    fnfLabel.grid(row = 0, column = 0)
+
+    fnfButton = tk.Button(popupWindow, text = "OK", command = lambda: error(popupWindow))
+    fnfButton.grid(row = 1, column = 0)
+
+    fnfBuffer = tk.Label(popupWindow, text = "")
+    fnfBuffer.grid()
+
+    popupWindow.mainloop()
 
 
 ################################################################################
@@ -162,7 +200,7 @@ def create_auto_panel(resultsFrame, listOfBests, flightsForCriteria):
 #               listOfBests        (List[List[Tuple(String, List)]]): The list of best options for each
 #                                  criterion and their respective names, average ranks, and average scores
 #               desiredCriterion   (Integer): The desired criterion expressed as an integer
-#               flightsForCriteria (List[Dict[String: List]])
+#               flightsForCriteria (List[Dict[String: List]]): Flights for each option in each criteria
 #   RETURN VALUES: none
 ################################################################################
 def display_best(resultsFrame, listOfBests, desiredCriterion, flightsForCriteria):
@@ -180,10 +218,10 @@ def display_best(resultsFrame, listOfBests, desiredCriterion, flightsForCriteria
     critDict[5] =  "origin state"
     critDict[6] =  "destination state"
     critDict[7] =  "month"
-    critDict[8] =  "carrier from best months"
-    critDict[9] =  "distance from best aircraft"
+    critDict[8] =  "carrier from best month"
+    critDict[9] =  "aircraft from best distance"
     critDict[10] = "origin state from best carrier"
-    
+
     bestOption = tk.StringVar()                             # The output of the best option
     bestOptionName = listOfBests[desiredCriterion][0][0]    # The best option name from the list of overall best criterion
     bestOptionRank = listOfBests[desiredCriterion][0][1][0] # The best option rank
@@ -249,7 +287,7 @@ def display_best(resultsFrame, listOfBests, desiredCriterion, flightsForCriteria
 #   PARAMETERS: criteriaTree       (tk.Treeview): The treeview to display the different criteria
 #               flightTree         (tk.Treeview): Treeview to display individual flights for an option
 #               desiredCriterion   (Integer): The desired criterion expressed as an integer
-#               flightsForCriteria (List[Dict[String: List]])
+#               flightsForCriteria (List[Dict[String: List]]): Flights for each option in each criteria 
 #   RETURN VALUES: none
 ################################################################################
 def select_item(criteriaTree, flightTree, desiredCriterion, flightsForCriteria):
@@ -259,8 +297,11 @@ def select_item(criteriaTree, flightTree, desiredCriterion, flightsForCriteria):
     # currentFlights takes the list of organized criteria with their dicts
     # and gets the dict of the desiredCriterion, and uses the name of the criteria from the tree as the index of the dict
     try:
-        currentFlights = flightsForCriteria[desiredCriterion][criteriaTree.item(curItem)["values"][0]]
+        currentFlights = flightsForCriteria[desiredCriterion][criteriaTree.item(curItem)['values'][0]]
     except IndexError: # If user clicks something other than an item
+        return
+    except TypeError: # If wrong type is used to select values from the list
+        print("Error while retrieving flight list")
         return
 
     # Remove all previous flights
@@ -391,9 +432,15 @@ def create_main_label(resultsFrame):
         Welcome to Flight Picker.\n
         There are two modes to choose from: Automatic and Manual.\n
         Automatic will choose the best flights based on predetermined criteria.
-        Use the tabs to cycle between the criteria. Select a specific item in the criteria list to view its flights.\n
+        Use the tabs to cycle between the criteria. Select a specific item in the criteria list to view its flights.
+
+        Combinations of criteria for automatic mode are determined as follows:
+            The first criterion will have its best option's flights used for the basis of the second criterion.
+            Example: For 'Month + Carrier', the best carriers will be displayed for the flights that have the best month.\n
         Manual will allow you to filter out the best flights for any criteria and combination of criteria.
-        If different options are selected, use the 'Find Flights' button to update the results window.\n
+        If different options are selected, use the 'Find Flights' button to update the results window.
+        Use the reset button to change all options back to 'None'.
+        The random button will select random options for Distance, Carrier, and Month.\n
         -------------------------------------------------------------------------------------------------------------------------------------\n
         Choose a mode to the left and click 'Find Flights' to generate the results.\n
         Use the 'Main Menu' choice to return to this screen.\n

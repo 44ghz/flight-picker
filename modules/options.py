@@ -183,8 +183,8 @@ def read_options(filename):
         os.chdir('..') # Go back to the main dir
         os.chdir('..')
         return optionsList
-    except FileNotFoundError:
-        tf.fnf_popup()
+    except FileNotFoundError: # If an options file is missing, or the options folder is missing
+        update_options_lists()
 
 
 ################################################################################
@@ -196,13 +196,16 @@ def read_options(filename):
 #   RETURN VALUES: none
 ################################################################################
 def write_options(optionsList, filename):
-    os.chdir('data/options') # Change to options folder
-    with open(filename, 'w') as file:
-        for option in optionsList:
-            file.write('%s\n' % option) # Adding each option to the file
-    os.chdir('..') # Go back to the main dir
-    os.chdir('..')
-
+    try:
+        os.chdir('data/options') # Change to options folder
+        with open(filename, 'w') as file:
+            for option in optionsList:
+                file.write('%s\n' % option) # Adding each option to the file
+        os.chdir('..') # Go back to the main dir
+        os.chdir('..')
+    except FileNotFoundError: # If the directory does not exist
+        os.mkdir('data/options')
+        write_options(optionsList, filename)
 
 ################################################################################
 #   FUNCTION NAME: disable_options

@@ -16,7 +16,27 @@ def open_data(filename):
         os.chdir('..')                     # Changing back to the main directory
         return flightData
     except FileNotFoundError:
-        tf.fnf_popup()
+        tf.file_not_found()
+
+
+################################################################################
+#   FUNCTION NAME: data_exists
+#   DESCRIPTION: Touches data files and ensures they exist before continuing with the creation of the
+#                main window and execution of the program
+#   PARAMETERS: none
+#   RETURN VALUES: none
+################################################################################
+def data_exists():
+    dataName =     "ProjectData.csv"
+    aircraftName = "AircraftNames.csv"
+    os.chdir('data')
+    dataExists = os.path.isfile(dataName)
+    aircraftNamesExist = os.path.isfile(aircraftName)
+    os.chdir('..')  # Changing back to the main directory
+    if dataExists and aircraftNamesExist: # If all data files exist then everything is fine
+        return
+    else: # If they're not all present, alert user and close the program
+        tf.file_not_found()
 
 
 ################################################################################
