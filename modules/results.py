@@ -170,14 +170,17 @@ def automatic(resultsFrame, flightList):
 
     # Getting the best options for each criterion, passing in the list of flights for each criterion
     # Includes all options for each criterion, but ordered by best average score for each option
-    ranksForDistance = find_best_auto(flightsForDistance)
-    ranksForCarrier = find_best_auto(flightsForCarrier)
-    ranksForOriginCity = find_best_auto(flightsForOriginCity)
-    ranksForDestCity = find_best_auto(flightsForDestCity)
-    ranksForAircraft = find_best_auto(flightsForAircraft)
-    ranksForOriginState = find_best_auto(flightsForOriginState)
-    ranksForDestState = find_best_auto(flightsForDestState)
-    ranksForMonth = find_best_auto(flightsForMonth)
+    ranksForDistance =         find_best_auto(flightsForDistance)
+    ranksForCarrier =          find_best_auto(flightsForCarrier)
+    ranksForOriginCity =       find_best_auto(flightsForOriginCity)
+    ranksForDestCity =         find_best_auto(flightsForDestCity)
+    ranksForAircraft =         find_best_auto(flightsForAircraft)
+    ranksForOriginState =      find_best_auto(flightsForOriginState)
+    ranksForDestState =        find_best_auto(flightsForDestState)
+    ranksForMonth =            find_best_auto(flightsForMonth)
+    ranksForMonthCarrier =     find_best_auto(flightsForMonth, MONTH_COLUMN, CARRIER_COLUMN)
+    ranksForDistanceAircraft = find_best_auto(flightsForDistance, DIST_COLUMN, AIRCRAFT_COLUMN)
+    ranksForCarrierOrState =   find_best_auto(flightsForCarrier, CARRIER_COLUMN, OR_STATE_COLUMN)
 
     listOfBests = [] # The overall list of best criteria
 
@@ -190,6 +193,9 @@ def automatic(resultsFrame, flightList):
     listOfBests.append(ranksForOriginState)
     listOfBests.append(ranksForDestState)
     listOfBests.append(ranksForMonth)
+    listOfBests.append(ranksForMonthCarrier)
+    listOfBests.append(ranksForDistanceAircraft)
+    listOfBests.append(ranksForCarrierOrState)
 
     tf.create_auto_panel(resultsFrame, listOfBests, flightsForCriteria) # Create the tabs to display data
 
@@ -199,10 +205,12 @@ def automatic(resultsFrame, flightList):
 #   DESCRIPTION: Takes a dict and sorts the options for each criterion by their average score. This is calculated by
 #                averaging the score of each of the flights associated with each option. This function is meant to
 #                run on a single criterion at a time, and operating on that criterion's options.
-#   PARAMETERS: critDict (List[Dict[String: List]): The list of categorized flights (dicts)
+#   PARAMETERS: critDict     (List[Dict[String: List]]): The list of categorized flights (dicts)
+#               firstColumn  (Integer): Optional list of more flights (for combinations)
+#               secondColumn (Integer)
 #   RETURN VALUES: critInfo (List[Tuple(String, List)]): The sorted options for the passed criterion
 ################################################################################
-def find_best_auto(critDict):
+def find_best_auto(critDict, firstColumn = None, secondColumn = None):
     SCORE_COLUMN = 0 # The columns containing the score and percentage of a flight
     PERCENTAGE_COLUMN = 1
 
@@ -235,9 +243,34 @@ def find_best_auto(critDict):
         critInfo[option] = comboList
 
     critInfo = sorted(critInfo.items(), key = operator.itemgetter(1), reverse = True) # Sorting the dict by score
-    # In the process, the dict becomes a tuple
+    # In the process, the dict becomes a list of tuples
 
-    return critInfo
+    if firstColumn is None and secondColumn is None:
+        return critInfo
+    else:
+        # Take the critDict and get the values from the key that matches that of the first of the best tuple
+        # Get the flights from that and add to a new list, then run back through this function
+
+        bestOptionName  = critInfo[0][0]
+        bestOptionFlights = critInfo[0] # Get the best list of flights for the first criterion
+
+        filteredFlights = critDict[bestOptionName]
+        secondDict = {}
+
+        for flight in filteredFlights:
+            secondDict[flight[secondColumn]] = []
+
+        for flight in filteredFlights:
+            secondDict[flight[secondColumn]].append(flight)
+
+        return find_best_auto(secondDict)
+
+        # Send the newly filtered dictionary through the same function to
+        # get the best options for the smaller flight pool
+        #return find_best_auto(filtered)
+
+        # go through every key's values
+        # every key is a string and its values are list of lists
 
 
 ################################################################################

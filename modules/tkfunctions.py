@@ -79,49 +79,65 @@ def create_auto_panel(resultsFrame, listOfBests, flightsForCriteria):
     criteriaTabs = ttk.Notebook(resultsFrame) # The pages used to tab through the criteria
 
     critDistance = ttk.Frame(criteriaTabs,
-        width = 1695,
-        height = 676)   # First page
+        width = 1750,
+        height = 676)   # 1st page
 
     critCarrier = ttk.Frame(criteriaTabs,
-        width = 1695,
-        height = 676)   # Second page
+        width = 1750,
+        height = 676)   # 2nd page
 
     critOriginCity = ttk.Frame(criteriaTabs,
-        width = 1695,
-        height = 676)   # Third page
+        width = 1750,
+        height = 676)   # 3rd page
 
     critDestCity = ttk.Frame(criteriaTabs,
-        width = 1695,
-        height = 676)   # Fourth page
+        width = 1750,
+        height = 676)   # 4th page
 
     critAircraft = ttk.Frame(criteriaTabs,
-        width = 1695,
-        height = 676)   # Fifth page
+        width = 1750,
+        height = 676)   # 5th page
 
     critOriginState = ttk.Frame(criteriaTabs,
-        width = 1695,
-        height = 676)   # Sixth page
+        width = 1750,
+        height = 676)   # 6th page
 
     critDestState = ttk.Frame(criteriaTabs,
-        width = 1695,
-        height = 676)   # Seventh page
+        width = 1750,
+        height = 676)   # 7th page
 
     critMonth = ttk.Frame(criteriaTabs,
-        width = 1695,
-        height = 676)   # Eighth page
+        width = 1750,
+        height = 676)   # 8th page
+
+    critMonthCarrier = ttk.Frame(criteriaTabs,
+        width = 1750,
+        height = 676)   # 9th page
+
+    critDistanceAircraft = ttk.Frame(criteriaTabs,
+        width = 1750,
+        height = 676)   # 10th page
+
+    critCarrierOrState = ttk.Frame(criteriaTabs,
+        width = 1750,
+        height = 676)   # 11th page
+
 
 
     ############################################################################
     # Creating the tabs themselves by adding them to the notebook
 
-    criteriaTabs.add(critDistance, text =    "               Distance              ")
-    criteriaTabs.add(critCarrier, text =     "               Carrier               ")
-    criteriaTabs.add(critOriginCity, text =  "              Origin City            ")
-    criteriaTabs.add(critDestCity, text =    "           Destination City          ")
-    criteriaTabs.add(critAircraft, text =    "               Aircraft              ")
-    criteriaTabs.add(critOriginState, text = "             Origin State            ")
-    criteriaTabs.add(critDestState, text =   "           Destination State         ")
-    criteriaTabs.add(critMonth, text =       "                   Month                ")
+    criteriaTabs.add(critDistance,         text = "        Distance        ")
+    criteriaTabs.add(critCarrier,          text = "        Carrier         ")
+    criteriaTabs.add(critOriginCity,       text = "       Origin City      ")
+    criteriaTabs.add(critDestCity,         text = "    Destination City    ")
+    criteriaTabs.add(critAircraft,         text = "        Aircraft        ")
+    criteriaTabs.add(critOriginState,      text = "      Origin State      ")
+    criteriaTabs.add(critDestState,        text = "   Destination State    ")
+    criteriaTabs.add(critMonth,            text = "         Month          ")
+    criteriaTabs.add(critMonthCarrier,     text = "     Month + Carrier    ")
+    criteriaTabs.add(critDistanceAircraft, text = "  Distance + Aircraft   ")
+    criteriaTabs.add(critCarrierOrState,   text = " Origin State + Carrier ")
     criteriaTabs.grid(row = 0, column = 0)
 
 
@@ -134,6 +150,9 @@ def create_auto_panel(resultsFrame, listOfBests, flightsForCriteria):
     display_best(critOriginState, listOfBests, 5, flightsForCriteria)
     display_best(critDestState, listOfBests, 6, flightsForCriteria)
     display_best(critMonth, listOfBests, 7, flightsForCriteria)
+    display_best(critMonthCarrier, listOfBests, 8, flightsForCriteria)
+    display_best(critDistanceAircraft, listOfBests, 9, flightsForCriteria)
+    display_best(critCarrierOrState, listOfBests, 10, flightsForCriteria)
 
 
 ################################################################################
@@ -153,15 +172,18 @@ def display_best(resultsFrame, listOfBests, desiredCriterion, flightsForCriteria
 
     # Casting the integer of the desired criterion to a string
     critDict = {}
-    critDict[0] = "distance (in miles)"
-    critDict[1] = "carrier"
-    critDict[2] = "origin city"
-    critDict[3] = "destination city"
-    critDict[4] = "aircraft"
-    critDict[5] = "origin state"
-    critDict[6] = "destination state"
-    critDict[7] = "month"
-
+    critDict[0] =  "distance (in miles)"
+    critDict[1] =  "carrier"
+    critDict[2] =  "origin city"
+    critDict[3] =  "destination city"
+    critDict[4] =  "aircraft"
+    critDict[5] =  "origin state"
+    critDict[6] =  "destination state"
+    critDict[7] =  "month"
+    critDict[8] =  "carrier from best months"
+    critDict[9] =  "distance from best aircraft"
+    critDict[10] = "origin state from best carrier"
+    
     bestOption = tk.StringVar()                             # The output of the best option
     bestOptionName = listOfBests[desiredCriterion][0][0]    # The best option name from the list of overall best criterion
     bestOptionRank = listOfBests[desiredCriterion][0][1][0] # The best option rank
@@ -174,7 +196,7 @@ def display_best(resultsFrame, listOfBests, desiredCriterion, flightsForCriteria
 
 
     bestOptionFrame = tk.Frame(resultsFrame,
-        width = 1695,
+        width = 1750,
         height = 676)
     bestOptionFrame.pack()
 
@@ -292,7 +314,7 @@ def configure_treeview(resultsFrame, flightTree):
         orient = "vertical",
         command = flightTree.yview)
 
-    treeScrollBar.pack(side = 'right', fill = 'y', expand = 1)
+    treeScrollBar.pack(side = 'right', fill = 'y')
 
     # Configuring the scroll funtion the flight tree to control the scroll bar
     flightTree.configure(yscrollcommand = treeScrollBar.set)
@@ -302,20 +324,20 @@ def configure_treeview(resultsFrame, flightTree):
     flightTree['show'] = 'headings'
 
     # Adding all columns
-    flightTree.column("1", width = 110, anchor = 'c')
-    flightTree.column("2", width = 110, anchor = 'c')
-    flightTree.column("3", width = 110, anchor = 'c')
-    flightTree.column("4", width = 110, anchor = 'c')
-    flightTree.column("5", width = 110, anchor = 'c')
-    flightTree.column("6", width = 110, anchor = 'c')
-    flightTree.column("7", width = 110, anchor = 'c')
-    flightTree.column("8", width = 110, anchor = 'c')
-    flightTree.column("9", width = 110, anchor = 'c')
-    flightTree.column("10", width = 110, anchor = 'c')
-    flightTree.column("11", width = 110, anchor = 'c')
-    flightTree.column("12", width = 110, anchor = 'c')
-    flightTree.column("13", width = 110, anchor = 'c')
-    flightTree.column("14", width = 110, anchor = 'c')
+    flightTree.column("1", width = 114, anchor = 'c')
+    flightTree.column("2", width = 114, anchor = 'c')
+    flightTree.column("3", width = 114, anchor = 'c')
+    flightTree.column("4", width = 114, anchor = 'c')
+    flightTree.column("5", width = 114, anchor = 'c')
+    flightTree.column("6", width = 114, anchor = 'c')
+    flightTree.column("7", width = 114, anchor = 'c')
+    flightTree.column("8", width = 114, anchor = 'c')
+    flightTree.column("9", width = 114, anchor = 'c')
+    flightTree.column("10", width = 114, anchor = 'c')
+    flightTree.column("11", width = 114, anchor = 'c')
+    flightTree.column("12", width = 114, anchor = 'c')
+    flightTree.column("13", width = 114, anchor = 'c')
+    flightTree.column("14", width = 114, anchor = 'c')
 
     # Adding all headings
     flightTree.heading("1", text = "Points")
