@@ -95,7 +95,7 @@ mainWindow.iconphoto(True, icon)                       # Applying the icon to th
 mainWindow.title("Flight Picker")                      # The title of the GUI window
 mainWindow.option_add("*Button.Background", "#e0e0e0") # Changing button colors
 mainWindow.option_add("*Button.Foreground", "#444444")
-mainWindow.geometry("1695x785")                        # Scale of the window
+mainWindow.geometry("1750x785")                        # Scale of the window
 mainWindow.resizable(0, 0)                             # Cannot resize window (x, y)
 
 mainWindow.grid_rowconfigure(0, weight = 2)
@@ -221,7 +221,7 @@ verticalSeparator.grid(row = 0, column = 1, sticky = 'w')
 # Frame for displaying results and notifications, in addition to the main menu
 
 resultsFrame = tk.Frame(mainWindow,
-    width = 1560,
+    width = 1618,
     height = 785)
 resultsFrame.grid(row = 0, column = 2, sticky = 'w')
 resultsFrame.grid_propagate(0)
