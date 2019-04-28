@@ -80,7 +80,6 @@ def get_user_choices(comboBoxList):
     return optionsDict
 
 
-
 ################################################################################
 
 dr.data_exists()   # Touching the data files to make sure they exist

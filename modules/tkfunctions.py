@@ -86,6 +86,7 @@ def file_not_found():
 
     popupWindow = common_theme()
     popupWindow.title("File Error")
+    popupWindow.geometry("700x110")
     popupWindow.resizable(0, 0)
 
     fnfLabel = tk.Label(popupWindow, text =
@@ -110,7 +111,7 @@ def file_not_found():
 #   PARAMETERS: resultsFrame       (tk.Frame): The frame in which to display results
 #               listOfBests        (List[List[Tuple(String, List)]]): The list of best options for each
 #                                  criterion and their respective names, average ranks, and average scores
-#               flightsForCriteria (List[Dict[String: List]])
+#               flightsForCriteria (List[Dict[String: List]]): Flights for each option in each criterion
 #   RETURN VALUES: none
 ################################################################################
 def create_auto_panel(resultsFrame, listOfBests, flightsForCriteria):
@@ -175,7 +176,7 @@ def create_auto_panel(resultsFrame, listOfBests, flightsForCriteria):
     criteriaTabs.add(critMonth,            text = "         Month          ")
     criteriaTabs.add(critMonthCarrier,     text = "     Month + Carrier    ")
     criteriaTabs.add(critDistanceAircraft, text = "  Distance + Aircraft   ")
-    criteriaTabs.add(critCarrierOrState,   text = " Origin State + Carrier ")
+    criteriaTabs.add(critCarrierOrState,   text = " Carrier + Origin State ")
     criteriaTabs.grid(row = 0, column = 0)
 
 
@@ -200,7 +201,7 @@ def create_auto_panel(resultsFrame, listOfBests, flightsForCriteria):
 #               listOfBests        (List[List[Tuple(String, List)]]): The list of best options for each
 #                                  criterion and their respective names, average ranks, and average scores
 #               desiredCriterion   (Integer): The desired criterion expressed as an integer
-#               flightsForCriteria (List[Dict[String: List]]): Flights for each option in each criteria
+#               flightsForCriteria (List[Dict[String: List]]): Flights for each option in each criterion
 #   RETURN VALUES: none
 ################################################################################
 def display_best(resultsFrame, listOfBests, desiredCriterion, flightsForCriteria):
@@ -287,7 +288,7 @@ def display_best(resultsFrame, listOfBests, desiredCriterion, flightsForCriteria
 #   PARAMETERS: criteriaTree       (tk.Treeview): The treeview to display the different criteria
 #               flightTree         (tk.Treeview): Treeview to display individual flights for an option
 #               desiredCriterion   (Integer): The desired criterion expressed as an integer
-#               flightsForCriteria (List[Dict[String: List]]): Flights for each option in each criteria 
+#               flightsForCriteria (List[Dict[String: List]]): Flights for each option in each criteria
 #   RETURN VALUES: none
 ################################################################################
 def select_item(criteriaTree, flightTree, desiredCriterion, flightsForCriteria):

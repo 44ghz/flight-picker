@@ -30,9 +30,12 @@ def data_exists():
     dataName =     "ProjectData.csv"
     aircraftName = "AircraftNames.csv"
     os.chdir('data')
+
     dataExists = os.path.isfile(dataName)
     aircraftNamesExist = os.path.isfile(aircraftName)
+
     os.chdir('..')  # Changing back to the main directory
+
     if dataExists and aircraftNamesExist: # If all data files exist then everything is fine
         return
     else: # If they're not all present, alert user and close the program

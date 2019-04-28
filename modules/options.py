@@ -60,13 +60,13 @@ def create_options(optionsFrame):
     comboBoxList.append(aircraftMenu)
 
     # State origin selection menu
-    stateOriginLabel = tk.Label(optionsFrame, text = "\nState Origin", font = helvBold)
+    stateOriginLabel = tk.Label(optionsFrame, text = "\nOrigin State", font = helvBold)
     stateOriginLabel.grid(row = 11, column = 0, sticky = 'w', ipadx = 6)
     stateOriginMenu = tf.OptionsCombobox(optionsFrame, stateDestinationList, 12, 0)
     comboBoxList.append(stateOriginMenu)
 
     # State destination selection menu
-    stateDestinationLabel = tk.Label(optionsFrame, text = "\nState Destination", font = helvBold)
+    stateDestinationLabel = tk.Label(optionsFrame, text = "\nDestination State", font = helvBold)
     stateDestinationLabel.grid(row = 13, column = 0, sticky = 'w', ipadx = 6)
     stateDestinationMenu = tf.OptionsCombobox(optionsFrame, stateOriginList, 14, 0)
     comboBoxList.append(stateDestinationMenu)
@@ -105,8 +105,8 @@ def get_options_lists():
     optionsList.append(read_options("origincities.dat"))
     optionsList.append(read_options("destinationcities.dat"))
     optionsList.append(read_options("aircraft.dat"))
-    optionsList.append(read_options("stateorigins.dat"))
-    optionsList.append(read_options("statedestinations.dat"))
+    optionsList.append(read_options("originstates.dat"))
+    optionsList.append(read_options("destinationstates.dat"))
     optionsList.append(read_options("months.dat"))
 
     return optionsList
@@ -154,10 +154,10 @@ def update_options_lists():
     write_options(aircraftList, "aircraft.dat")
 
     stateOriginList = dr.get_data(flightData, STATE_ORIGIN_COLUMN) # Creating list for state origins
-    write_options(stateOriginList, "stateorigins.dat")
+    write_options(stateOriginList, "originstates.dat")
 
     stateDestinationList = dr.get_data(flightData, STATE_DESTINATION_COLUMN) # Creating list for state destinations
-    write_options(stateDestinationList, "statedestinations.dat")
+    write_options(stateDestinationList, "destinationstates.dat")
 
     # Creating list for months
     monthList = ["None", "January", "February", "March", "April", "May", "June",
@@ -185,6 +185,7 @@ def read_options(filename):
         return optionsList
     except FileNotFoundError: # If an options file is missing, or the options folder is missing
         update_options_lists()
+        return read_options(filename) # Still want to return the options for that file
 
 
 ################################################################################

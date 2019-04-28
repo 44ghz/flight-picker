@@ -259,17 +259,17 @@ def find_best_auto(critDict, firstColumn = None, secondColumn = None):
     critInfo = sorted(critInfo.items(), key = operator.itemgetter(1), reverse = True) # Sorting the dict by score
     # In the process, the dict becomes a list of tuples
 
-    if firstColumn is None and secondColumn is None:
+    if firstColumn is None and secondColumn is None: # If the user didn't supply additional commands
         return critInfo
     else:
         # Take the critDict and get the values from the key that matches that of the first of the best tuple
         # Get the flights from that and add to a new list, then run back through this function
 
-        bestOptionName  = critInfo[0][0]
+        bestOptionName  = critInfo[0][0]# Getting the name of the best criterion
         bestOptionFlights = critInfo[0] # Get the best list of flights for the first criterion
 
-        filteredFlights = critDict[bestOptionName]
-        # filteredFlights = sorted(filteredFlights, key = operator.itemgetter(0), reverse = True)
+        filteredFlights = critDict[bestOptionName] # The list of flights for the smaller flight pool
+
         secondDict = {}
 
         for flight in filteredFlights: # Making every key value a list
