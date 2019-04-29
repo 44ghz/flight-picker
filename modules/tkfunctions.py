@@ -231,7 +231,7 @@ def display_best(resultsFrame, listOfBests, desiredCriterion, flightsForCriteria
     # Outputting the best option and its score and percentage at the top of the window
     bestOption.set("Best " + critDict[desiredCriterion] + ": " + bestOptionName +
         "\nAverage score: " + str(bestOptionRank) + " points" +
-        "\nAverage percentage: " + str(bestOptionRank) + "%")
+        "\nAverage percentage: " + str(bestOptionPerc) + "%")
 
 
     bestOptionFrame = tk.Frame(resultsFrame,
