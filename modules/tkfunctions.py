@@ -106,6 +106,38 @@ def file_not_found():
 
 
 ################################################################################
+#   FUNCTION NAME: empty_data
+#   DESCRIPTION: Alerts the user that data files are empty, and will not continue
+#                execution until the errors are fixed
+#   PARAMETERS: none
+#   RETURN VALUES: none
+################################################################################
+def empty_data():
+    def error(window):
+        window.destroy
+        exit()
+
+    popupWindow = common_theme()
+    popupWindow.title("Empty Data")
+    popupWindow.geometry("720x110")
+    popupWindow.resizable(0, 0)
+
+    emptyDataLabel = tk.Label(popupWindow, text =
+    """
+    At least one data file ("ProjectData.csv" and/or "AircraftNames.csv") is empty and does not contain data.
+    Please ensure the correct file is being provided and there are rows to process, then restart the program.
+    """, justify = tk.LEFT)
+    emptyDataLabel.grid(row = 0, column = 0)
+
+    emptyDataButton = tk.Button(popupWindow, text = "OK", command = lambda: error(popupWindow))
+    emptyDataButton.grid(row = 1, column = 0)
+
+    emptyDataBuffer = tk.Label(popupWindow, text = "")
+    emptyDataBuffer.grid()
+
+    popupWindow.mainloop()
+
+################################################################################
 #   FUNCTION NAME: create_auto_panel
 #   DESCRIPTION: Creates the tabs for the best options for criteria, then calls display_best for each
 #   PARAMETERS: resultsFrame       (tk.Frame): The frame in which to display results

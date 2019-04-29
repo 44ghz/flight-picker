@@ -52,6 +52,11 @@ def data_exists():
 ################################################################################
 def get_data(flightData, column):
     rows = len(flightData.index) # The number of rows in the DataFrame
+
+    if rows < 1: # If the data file is empty
+        tf.empty_data()
+        return
+
     dataList = []                # The list of data to retrieve
 
     for row in range(rows):
@@ -71,6 +76,11 @@ def get_data(flightData, column):
 ################################################################################
 def get_aircraft_dict(aircraftData):
     rows = len(aircraftData.index) # The number of rows in the DataFrame
+
+    if rows < 1: # If there are no data for the aircraft DataFrame
+        tf.empty_data()
+        return
+
     nameDict = {}                  # The code accompanied by the name of the aircraft
 
     # For every row, match the name with the code
